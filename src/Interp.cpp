@@ -57,6 +57,54 @@ namespace Cuben {
 			return p;
 		}
 				
+		Eigen::VectorXf cheb(Eigen::VectorXf t, int order) {
+			int n = t.rows();
+			if (order == 0) {
+				return Eigen::VectorXf::Ones(n);
+			} else if (order == 1) {
+				return Eigen::VectorXf(t);
+			} else {
+				return 2.0f * t.cwiseProduct(cheb(t, order - 1)) - cheb(t, order - 2);
+			}
+		}
+		
+		Eigen::VectorXf dchebdt(Eigen::VectorXf t, int order) {
+			int n = t.rows();
+			if (order == 0) {
+				return Eigen::VectorXf::Zero(n);
+			} else if (order == 1) {
+				return Eigen::VectorXf::Ones(n);
+			} else if (order == 2) {
+				return 4.0f * Eigen::VectorXf(t);
+			} else {
+				return 2.0f * cheb(t, order - 1) + 2.0f * t.cwiseProduct(dchebdt(t, order - 1)) - dchebdt(t, order - 2);
+			}
+		}
+		
+		Eigen::VectorXf d2chebdt2(Eigen::VectorXf t, int order) {
+			int n = t.rows();
+			if (order == 0) {
+				return Eigen::VectorXf::Zero(n);
+			} else if (order == 1) {
+				return Eigen::VectorXf::Zero(n);
+			} else if (order == 2) {
+				return 4.0f * Eigen::VectorXf::Ones(n);
+			} else if (order == 3) {
+				return 12.0f * t;
+			} else {
+				return 4.0f * dchebdt(t, order - 1) + 2 * t.cwiseProduct(d2chebdt2(t, order - 1)) - d2chebdt2(t, order - 2);
+			}
+		}
+		
+		Eigen::VectorXf chebSamp(float lhs, int n, float rhs) {
+			// Return array of points sampled between [lhs,rhs] using a Chebyshev distribution
+			Eigen::VectorXf xi(n);
+			for (int i = 0; i < n; i++) {
+				xi(i) = lhs + (rhs - lhs) * (0.5f - 0.5f * std::cos(M_PI * i / (n - 1)));
+			}
+			return xi;
+		}
+
 		float s(float x) {
 			return std::sin(x);
 		}
@@ -168,11 +216,6 @@ namespace Cuben {
 					di(i) = (ci(i+1) - ci(i)) / (3 * (xi(i+1) - xi(i)));
 					bi(i) = (yi(i+1) - yi(i)) / (xi(i+1) - xi(i)) - (xi(i+1) - xi(i)) * (2 * ci(i) + ci(i+1)) / 3;
 				}
-/*				std::cout << "A:" << std::endl << A << std::endl << std::endl;
-				std::cout << "r:" << std::endl << B << std::endl << std::endl;
-				std::cout << "bi:" << std::endl << bi << std::endl << std::endl;
-				std::cout << "ci:" << std::endl << ci << std::endl << std::endl;
-				std::cout << "di:" << std::endl << di << std::endl << std::endl;*/
 			}
 			while (ndxLeft < n - 1 && xi(ndxLeft+1) < x) {
 				ndxLeft++;
@@ -202,6 +245,15 @@ namespace Cuben {
 			p(0) = pi(0) + bx * t + cx * t * t + dx * t * t * t;
 			p(1) = pi(1) + by * t + cy * t * t + dy * t * t * t;
 			return p;
+		}
+		
+		float cubeFit(Eigen::VectorXf xi, Eigen::VectorXf yi, float x) {
+			if (xi.rows() != 4 || yi.rows() != 4) {
+				throw Cuben::xMismatchedPoints();
+			}
+			Eigen::MatrixXf A(4,4); A << xi(0) * xi(0) * xi(0), xi(0) * xi(0), xi(0), 1.0f, xi(1) * xi(1) * xi(1), xi(1) * xi(1), xi(1), 1.0f, xi(2) * xi(2) * xi(2), xi(2) * xi(2), xi(2), 1.0f, xi(3) * xi(3) * xi(3), xi(3) * xi(3), xi(3), 1.0f;
+			Eigen::VectorXf c = Cuben::Systems::paluSolve(A, yi);
+			return c(0) * x * x * x + c(1) * x * x + c(2) * x + c(3);
 		}
 
 		bool test() {

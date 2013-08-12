@@ -41,8 +41,22 @@ namespace Cuben {
 		return "Given point is outside interpolation bounds";
 	}
 
+	const char* xBelowMinStepSize::what() const throw() {
+		return "Could not meet tolerance without reducing step size below limit";
+	}
+	
+	const char * xInvalidSubIndexMapping::what() const throw() {
+		return "Invalid conversion between subindices and linear indices attempted; indices may be out of bounds, or dimensions may be incorrectly specified";
+	}
+	
+	const char * xInvalidRoll::what() const throw() {
+		return "This roll cannot be performed with the current instance";
+	}
+	
 	float iterTol = 1e-8;
 	float zeroTol = 1e-8;
 	float adaptiveTol = 1e-4;
+	float relDiffEqTol = 1e-6;
+	float bvpZeroTol = 1e-6;
 	int iterLimit = 1e4;
 }
