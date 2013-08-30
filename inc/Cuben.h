@@ -13,20 +13,7 @@
 #include <Eigen/Sparse>
 #include <exception>
 #include <iostream>
-
-	
-/*namespace Cuben {
-	class Cmplx : public std::complex<float> {
-		protected:
-		public:
-			Cmplx() : std::complex<float>(0.0f,0.0f) {}
-			Cmplx(float tht) : std::complex<float>(std::cos(tht),std::sin(tht)) {}
-			Cmplx(float r, float i) : std::complex<float>(r,i) {}
-	};
-	template<class T, class charT, class traits> std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& ostr, const Cmplx& rhs) {
-		return ostr << rhs.real << (rhs.imag < 0.0f ? "-" : "+") << std::abs(rhs.imag) << "i";
-	}
-}*/
+#include <vector>
 
 namespace std {
 	typedef complex<float> cmplx;
@@ -113,6 +100,7 @@ namespace Cuben {
 		bool isFin(float f);
 		float machEps();
 		float relEps(float x);
+		float stdDev(Eigen::VectorXf xi);
 		int findValue(Eigen::VectorXi vec, int value);
 		int findValue(Eigen::VectorXf vec, float value);
 		int sub2ind(Eigen::Vector2i dims, Eigen::Vector2i subNdx);
@@ -472,10 +460,56 @@ namespace Cuben {
 	}
 	
 	namespace Trig {
+		// Raw (single-vector) transforms and their recursive components
 		Eigen::VectorXc sft(Eigen::VectorXf xi);
-		Eigen::VectorXc isft(Eigen::VectorXf xi);
+		Eigen::VectorXf isft(Eigen::VectorXc yi);
 		Eigen::VectorXc fft(Eigen::VectorXf xi);
-		Eigen::VectorXc ifft(Eigen::VectorXf xi);
+		Eigen::MatrixXc fftRec(Eigen::VectorXf xi);
+		Eigen::VectorXf ifft(Eigen::VectorXc yi);
+		Eigen::MatrixXc fftRec(Eigen::VectorXc xi);
+		
+		// Signal transformations (includes shifting to and from symmetric format)
+		Eigen::VectorXc dft(Eigen::VectorXf xi);
+		Eigen::VectorXf idft(Eigen::VectorXc Xi);
+		Eigen::VectorXf genFreqVec(unsigned int n, float fSamp_hz);
+		Eigen::VectorXf genTimeVec(unsigned int n, float fSamp_hz);
+		void dftInterp(Eigen::VectorXf tmi_s, Eigen::VectorXf xmi, unsigned int n, Eigen::VectorXf &tni_s, Eigen::VectorXf &xni);
+		void dftFit(Eigen::VectorXf tni_s, Eigen::VectorXf xni, unsigned int m, Eigen::VectorXf &tmi_s, Eigen::VectorXf &xmi);
+		Eigen::VectorXf wienerFilter(Eigen::VectorXf xni, float p);
+
+		float testSignal(float t);
+		bool test();
+	}
+	
+	namespace Compress {
+		Eigen::VectorXf dct(Eigen::VectorXf xi);
+		float dctInterp(Eigen::VectorXf Xi, float t);
+		Eigen::VectorXf dctFit(Eigen::VectorXi xi, unsigned int n);
+		Eigen::MatrixXf dct2d(Eigen::MatrixXf xij);
+		Eigen::MatrixXf idct2d(Eigen::MatrixXf Xij);
+		Eigen::MatrixXi applyQuant(Eigen::MatrixXf Xij, Eigen::MatrixXf Qij);
+		Eigen::MatrixXf reverseQuant(Eigen::MatrixXi Xij, Eigen::MatrixXf Qij);
+		Eigen::MatrixXf linearQuant(unsigned int n, float p);
+		Eigen::MatrixXf jpegQuant(float p);
+		Eigen::MatrixXf baseYuvQuant();
+		
+		class JpgEncoder {
+			protected:
+				Eigen::VectorXi dpcmLengthTable;
+				std::vector<char> dpcmHexTable;
+				Eigen::MatrixXi rleLengthTable;
+				std::vector<char> rleHexTable;
+			public:
+				JpgEncoder();
+				unsigned int iitLen(int value);
+				void dpcmEnc(int value, unsigned int &nBits, std::vector<char> &bits);
+				void iitEnc(int value, unsigned int &nBits, std::vector<char> &bits);
+				void rleEnc(unsigned int nZeros, unsigned int nLength, unsigned int &nBits, std::vector<char> &bits);
+				/*std::vector<char> encode(Eigen::MatrixXi block);
+				Eigen::MatrixXi decode(std::vector<char> bits);*/
+		};
+
+		Eigen::MatrixXf loadTestMatrix();
 		bool test();
 	}
 }

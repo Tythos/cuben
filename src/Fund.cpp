@@ -102,6 +102,16 @@ namespace Cuben {
 			return eps;
 		}
 		
+		float stdDev(Eigen::VectorXf xi) {
+			unsigned int n = xi.rows();
+			float mean = xi.sum() / (float)n;
+			float run = 0.0f;
+			for (int i = 0; i < n; i++) {
+				run += (xi(i) - mean) * (xi(i) - mean);
+			}
+			return std::sqrt(run / ((float)n - 1.0f));
+		}
+		
 		int findValue(Eigen::VectorXi vec, int value) {
 			int toReturn  = -1;
 			int currNdx = 0;
