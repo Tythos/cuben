@@ -3,13 +3,13 @@
 	Derived from Chapter 0 of Timothy Sauer's 'Numerical Amalysis'
 */
 
-#include "../inc/Cuben.h"
+#include "cuben.h"
 
 namespace Cuben {
 	namespace Fund {
 		Polynomial::Polynomial() {
-			xi = Eigen::VectorXf(0);
-			ci = Eigen::MatrixXf(0,0);
+			//xi = Eigen::VectorXf(0);
+			//ci = Eigen::MatrixXf(0,0);
 		}
 		
 		void Polynomial::print() {
@@ -73,7 +73,7 @@ namespace Cuben {
 		}
 		
 		bool isInf(float f) {
-			return std::abs(f) == 1.0f / 0.0f;
+			return std::abs(f) == std::numeric_limits<float>::infinity();
 		}
 		
 		bool isNan(float f) {
