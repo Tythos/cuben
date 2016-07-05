@@ -149,7 +149,7 @@ namespace Cuben {
 		}
 		
 		float iqi(float(*f)(float), float x0, float x1) {
-			float x2 = 0.5 * (x1 + x2);
+			float x2 = 0.5 * (x0 + x1);
 			float f0 = f(x0);
 			float f1 = f(x1);
 			float f2 = f(x2);

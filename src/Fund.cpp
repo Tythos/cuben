@@ -8,60 +8,58 @@
 namespace Cuben {
 	namespace Fund {
 		Polynomial::Polynomial() {
-			//xi = Eigen::VectorXf(0);
-			//ci = Eigen::MatrixXf(0,0);
+			ri = Eigen::VectorXf();
+			ci = Eigen::VectorXf();
 		}
 		
 		void Polynomial::print() {
-			int n = this->xi.rows();
+			int n = ci.rows();
+			std::cout << "P(x) = ";
 			if (n == 0) {
-				std::cout << "p(x) = ?" << std::endl;
+				std::cout << "?" << std::endl;
 			} else {
-				std::cout << "p(x) = " << this->ci(0,0);
-				if (n > 1) {
-					std::cout << " + ";
-				}
-				for (int i = 0; i < n - 1; i++) {
-					if (i == n - 2) {
-						std::cout << " (x - " << this->xi(i) << ") (" << this->ci(0, i + 1) << ")";
-						for (int j = 0; j < n - 2; j++) {
-							std::cout<< " )";
-						}
+				for (int i = n - 1; i >= 0; i--) {
+					if (i > 0) {
+						std::cout << ci(i) << " + ";
 					} else {
-						std::cout << " (x - " << this->xi(i) << ") (" << this->ci(0, i + 1) << " +";
+						std::cout << ci(i);
 					}
+					if (i > 0) {
+						if (ri(i) == 0) {
+							std::cout << "x * ";
+						} else {
+							std::cout << "(x - " << ri(i) << ") * ";
+						}
+						if (i > 1) std::cout << "( ";
+					}
+				}
+				for (int i = n - 1; i > 1; i--) {
+					std::cout << " )";
 				}
 				std::cout << std::endl;
 			}
 		}
 		
 		float Polynomial::eval(float x) {
-			int n = this->xi.rows();
-			float y = 0.0f;
-			if (n != 0) {
-				for (int i = n - 1; i > 0; i--) {
-					y = (x - this->xi(i - 1)) * (this->ci(0,i) + y);
-				}
-				y = this->ci(0,0) + y;
+			int n = ci.rows();
+			if (n == 0) { return 0; }
+			float y = ci(0);
+			for (int i = 1; i < n; i++) {
+				y = y * (x - ri(i)) + ci(i);
 			}
 			return y;
 		}
 		
-		void Polynomial::push(float x, float y) {
-			int n = xi.rows();
-			xi.conservativeResize(n + 1);
-			ci.conservativeResize(n + 1, n + 1);
-			xi(n) = x;
-//			std::cout << "x:" << std::endl << xi << std::endl << std::endl;
-			ci(n,0) = y;
-			for (int i = 1; i <= n; i++) {
-//				std::cout << "ci[" << i << "]: " << std::endl << ci << std::endl << std::endl;
-				ci(n-i,i) = (ci(n-i+1,i-1) - ci(n-i,i-1)) / (xi(n) - xi(n-i));
-			}
+		void Polynomial::push(float r, float c) {
+			int n = ci.rows();
+			ri.conservativeResize(n + 1);
+			ci.conservativeResize(n + 1);
+			ri(n) = r;
+			ci(n) = c;
 		}
 		
-		int Polynomial::getNumPoints() {
-			return xi.rows();
+		int Polynomial::size() {
+			return ci.rows();
 		}
 		
 		void printVecTrans(Eigen::VectorXf v) {
@@ -71,7 +69,7 @@ namespace Cuben {
 			}
 			std::cout << "]";
 		}
-		
+
 		bool isInf(float f) {
 			return std::abs(f) == std::numeric_limits<float>::infinity();
 		}
@@ -144,7 +142,7 @@ namespace Cuben {
 			// for [3 x 5] field, the sub-indices [2,0] corresponds to linear index
 			// 2, while sub-indices [0,2] corresponds to linear index 6.
 			int linNdx = subNdx(0) * dims(0) + subNdx(1);
-			std::cout << "dims = [" << dims(0) << ";" << dims(1) << "], subNdx = [" << subNdx(0) << ";" << subNdx(1) << "] => linNdx = " << linNdx << std::endl;
+			//std::cout << "dims = [" << dims(0) << ";" << dims(1) << "], subNdx = [" << subNdx(0) << ";" << subNdx(1) << "] => linNdx = " << linNdx << std::endl;
 			if (linNdx < 0 || dims(0) * dims(1) <= linNdx) {
 				throw Cuben::xInvalidSubIndexMapping();
 			}
@@ -159,7 +157,7 @@ namespace Cuben {
 			// linear index 6 corresponds to the sub-indices [0.2].
 			Eigen::Vector2i subNdcs;
 			subNdcs << (int)std::floor((float)linNdx / (float)dims(0)), linNdx % dims(0);
-			std::cout << "dims = [" << dims(0) << ";" << dims(1) << "], linNdx = " << linNdx << " => subNdx = [" << subNdcs(0) << ";" << subNdcs(1) << "]" << std::endl;
+			//std::cout << "dims = [" << dims(0) << ";" << dims(1) << "], linNdx = " << linNdx << " => subNdx = [" << subNdcs(0) << ";" << subNdcs(1) << "]" << std::endl;
 			if (subNdcs(0) < 0 || dims(0) <= subNdcs(0) || subNdcs(1) < 0 || dims(1) <= subNdcs(1)) {
 				throw Cuben::xInvalidSubIndexMapping();
 			}
@@ -167,7 +165,12 @@ namespace Cuben {
 		}
 		
 		Eigen::VectorXf initRangeVec(float x0, float dx, float xf) {
-			int n = std::floor((xf - x0) / dx) + 1;
+			float x = x0;
+			int n = 0;
+			while (x <= xf) {
+				n++;
+				x += dx;
+			}
 			Eigen::VectorXf xi(n);
 			for (int i = 0; i < n; i++) {
 				xi(i) = x0 + i * dx;

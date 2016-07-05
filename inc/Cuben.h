@@ -82,16 +82,21 @@ namespace Cuben {
 
 	namespace Fund {
 		class Polynomial {
-		private:
-		protected:
-			Eigen::VectorXf xi;
-			Eigen::MatrixXf ci;
-		public:
+			// Uses polynomial model given by Horner's method to minimize
+			// computations: P(x) = c_n + (x - r_n) (c_{n-1} + (x - r_{n-1}...))
+			// Note that this means r_0 (first base point pushed) is ignored.
+			private:
+			
+			protected:
+			Eigen::VectorXf ri;
+			Eigen::VectorXf ci;
+			
+			public:
 			Polynomial();
 			void print();
 			float eval(float x);
-			void push(float x, float y);
-			int getNumPoints();
+			void push(float r, float c);
+			int size();
 		};
 
 		void printVecTrans(Eigen::VectorXf v);
@@ -128,6 +133,7 @@ namespace Cuben {
 	namespace Systems {
 		Eigen::VectorXf gaussElim(Eigen::MatrixXf A, Eigen::VectorXf y);
 		void luFactor(Eigen::MatrixXf A, Eigen::MatrixXf &L, Eigen::MatrixXf &U);
+		Eigen::VectorXf luSolve(Eigen::MatrixXf A, Eigen::VectorXf y);
 		Eigen::VectorXf residual(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf x);
 		float relForwError(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf xAppx, Eigen::VectorXf xExct);
 		float relBackError(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf xAppx);
