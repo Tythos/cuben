@@ -3,7 +3,7 @@
 	Derived from Chapter 1 of Timothy Sauer's 'NUmerical Amalysis'
 */
 
-#include "../inc/Cuben.h"
+#include "cuben.h"
 
 namespace Cuben {
 	namespace Equations {

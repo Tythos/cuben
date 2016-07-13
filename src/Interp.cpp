@@ -3,7 +3,7 @@
 	Derived from Chapter 3 of Timothy Sauer's 'Numerical Amalysis'
 */
 
-#include "../inc/Cuben.h"
+#include "cuben.h"
 
 namespace Cuben {
 	namespace Interp {
@@ -110,8 +110,8 @@ namespace Cuben {
 		}
 
 		CubicSplines::CubicSplines() {
-			xi = Eigen::VectorXf(0);
-			yi = Eigen::VectorXf(0);
+			xi = Eigen::VectorXf();
+			yi = Eigen::VectorXf();
 			ec = EC_NATURAL;
 		}
 		
@@ -138,10 +138,10 @@ namespace Cuben {
 		}
 
 		float CubicSplines::eval(float x) {
-			static Eigen::VectorXf ai(0);
-			static Eigen::VectorXf bi(0);
-			static Eigen::VectorXf ci(0);
-			static Eigen::VectorXf di(0);
+			static Eigen::VectorXf ai;
+			static Eigen::VectorXf bi;
+			static Eigen::VectorXf ci;
+			static Eigen::VectorXf di;
 			int n = xi.rows();
 			int ndxLeft = 0;
 

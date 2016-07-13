@@ -1,3 +1,7 @@
 @echo off
-del *.obj
-del *.exe
+if exist *.obj (
+	del *.obj
+)
+if exist test\*.exe (
+	del test\*.exe
+)

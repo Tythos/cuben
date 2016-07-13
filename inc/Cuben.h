@@ -97,6 +97,7 @@ namespace Cuben {
 			float eval(float x);
 			void push(float r, float c);
 			int size();
+			int getNumPoints() { return ri.rows(); 	}
 		};
 
 		void printVecTrans(Eigen::VectorXf v);

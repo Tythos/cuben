@@ -3,7 +3,7 @@
 	Derived from Chapter 8 of Timothy Sauer's 'Numerical Amalysis'
 */
 
-#include "../inc/Cuben.h"
+#include "cuben.h"
 
 namespace Cuben {
 	namespace Pde {

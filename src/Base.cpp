@@ -2,7 +2,7 @@
 	Basic tools (exceptions, references, etc.)
 */
 
-#include "../inc/Cuben.h"
+#include "cuben.h"
 
 namespace Cuben {
 	const char* xBisectionSign::what() const throw() {
