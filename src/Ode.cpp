@@ -743,7 +743,7 @@ namespace Cuben {
 		bool test() {
 			Eigen::Vector2f tInt; tInt << 0.0f,1.0f;
 			Eigen::VectorXf x0(2); x0 << M_PI/2.0f,0.0f;
-			Eigen::VectorXf ti(0); Eigen::MatrixXf xi(0,0);
+			Eigen::VectorXf ti; Eigen::MatrixXf xi(0,0);
 			rk23Sys(pendSys, tInt, x0, ti, xi);
 			std::cout << "t\tx0\tx1" << std::endl;
 			for (int i = 0; i < ti.rows(); i++) {

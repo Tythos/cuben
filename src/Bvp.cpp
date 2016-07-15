@@ -145,8 +145,8 @@ namespace Cuben {
 		Eigen::VectorXf colloPoly(Eigen::Vector3f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt) {
 			int n = 0;
 			Eigen::MatrixXf E(0,0);
-			Eigen::VectorXf g(0);
-			Eigen::VectorXf ci(0);
+			Eigen::VectorXf g;
+			Eigen::VectorXf ci;
 			Eigen::VectorXf ti = Cuben::Fund::initRangeVec(tBounds(0), dt, tBounds(1));
 			
 			n = ti.rows();
