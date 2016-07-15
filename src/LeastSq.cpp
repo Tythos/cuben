@@ -172,8 +172,8 @@ namespace Cuben {
 		void hhQrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::MatrixXf &R) {
 			int nIterations = std::min(A.rows() - 1, A.cols());
 			Eigen::MatrixXf H(0,0);
-			Eigen::VectorXf x(0);
-			Eigen::VectorXf w(0);
+			Eigen::VectorXf x;
+			Eigen::VectorXf w;
 			Eigen::MatrixXf subMat(0,0);
 			Eigen::MatrixXf Hfull(0,0);
 
