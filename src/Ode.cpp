@@ -8,6 +8,7 @@
 namespace Cuben {
 	namespace Ode {
 		Eigen::VectorXf euler(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0) {
+			// Implements Euler's Method for very, very basic ODE integration
 			int n = ti.rows();
 			Eigen::VectorXf xi(n);
 			for (int i = 0; i < n; i++) {
@@ -21,6 +22,7 @@ namespace Cuben {
 		}
 		
 		Eigen::VectorXf trap(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0) {
+			// Explicit trapezoid method for ODE integration
 			int n = ti.rows();
 			float sl = 0.0f;
 			float sr = 0.0f;
@@ -53,6 +55,7 @@ namespace Cuben {
 		}
 		
 		Eigen::VectorXf rk4(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0) {
+			// Runge-Kutta, order 4
 			int n = ti.rows();
 			float dt = 0.0f;
 			float s1 = 0.0f;
@@ -262,6 +265,7 @@ namespace Cuben {
 		}
 
 		void rk45Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tInt, Eigen::VectorXf x0, Eigen::VectorXf& ti, Eigen::MatrixXf& xi) {
+			// Runge-Kutta 4/5 multistep method for system integration
 			int nDims = x0.rows();
 			int n = 1;
 			int order = 5;
@@ -746,7 +750,7 @@ namespace Cuben {
 			Eigen::VectorXf ti; Eigen::MatrixXf xi(0,0);
 			rk23Sys(pendSys, tInt, x0, ti, xi);
 			std::cout << "t\tx0\tx1" << std::endl;
-			for (int i = 0; i < ti.rows(); i++) {
+			for (int i = 0; i < 10; i++) {
 				std::cout << ti(i) << "\t" << xi(i,0) << "\t" << xi(i,1) << std::endl;
 			}
 			return true;

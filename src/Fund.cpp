@@ -70,6 +70,14 @@ namespace Cuben {
 			std::cout << "]";
 		}
 
+		void printVecSeries(Eigen::VectorXf v1, Eigen::VectorXf v2, char* n1, char* n2) {
+			std::cout << n1 << "\t" << n2 << std::endl;
+			std::cout << "----\t----" << std::endl;
+			for (int i = 0; i < v1.rows(); i++) {
+				std::cout << v1(i) << "\t" << v2(i) << std::endl;
+			}
+		}
+		
 		bool isInf(float f) {
 			return std::abs(f) == std::numeric_limits<float>::infinity();
 		}

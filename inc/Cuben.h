@@ -101,6 +101,7 @@ namespace Cuben {
 		};
 
 		void printVecTrans(Eigen::VectorXf v);
+		void printVecSeries(Eigen::VectorXf v1, Eigen::VectorXf v2, char* n1="vec1", char* n2="vec2");
 		bool isInf(float f);
 		bool isNan(float f);
 		bool isFin(float f);
