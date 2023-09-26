@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(cuben)
-add_library(cuben STATIC
+
+# define dependencies
+add_subdirectory(eigen EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+
+# define library contents
+add_library(${PROJECT_NAME} STATIC
     Base.cpp
     Bvp.cpp
     Compress.cpp
@@ -15,10 +21,9 @@ add_library(cuben STATIC
     Systems.cpp
     Trig.cpp
 )
-add_executable(diffint test_diffint.cpp)
-add_executable(equations test_equations.cpp)
-add_executable(fund test_fund.cpp)
-add_executable(interp test_interp.cpp)
-add_executable(leastsq test_leastsq.cpp)
-add_executable(ode test_ode.cpp)
-add_executable(systems test_systems.cpp)
+
+# define test executables
+enable_testing()
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIR})
+add_test(diffint tests/test_diffint.cpp)
