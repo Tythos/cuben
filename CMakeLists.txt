@@ -1,33 +1,34 @@
-cmake_minimum_required(VERSION 3.10.2)
+# top-level project build configuration
+cmake_minimum_required(VERSION 3.14)
 project(cuben)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# include dependencies
-add_subdirectory(eigen EXCLUDE_FROM_ALL)
+# one-time test configuraiton
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 add_subdirectory(googletest EXCLUDE_FROM_ALL)
+add_subdirectory(eigen EXCLUDE_FROM_ALL)
+enable_testing()
 
-# define library contents
+# define primary build target
 add_library(${PROJECT_NAME} STATIC
     constants.cpp
-    # Base.cpp
-    # Bvp.cpp
-    # Compress.cpp
-    # DiffInt.cpp
-    # Equations.cpp
-    # Fund.cpp
-    # Interp.cpp
-    # LeastSq.cpp
-    # Ode.cpp
-    # Pde.cpp
-    # Rand.cpp
-    # Systems.cpp
-    # Trig.cpp
+    exceptions.cpp
+    polynomial.cpp
+    fundamentals.cpp
 )
-
-# link against dependencies
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
-# # define test executables
-# enable_testing()
-# add_executable(diffint tests/test_diffint.cpp)
-# target_link_libraries(diffint gtest gtest_main)
-# add_test(diffint diffint)
+# define test hooks
+function(add_gtest test_name test_source)
+    add_executable(${test_name} ${test_source})
+    target_include_directories(${test_name} PUBLIC ${CMAKE_SOURCE_DIR})
+    target_link_libraries(${test_name} Eigen3::Eigen gtest gtest_main ${PROJECT_NAME})
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
+
+# add, link, catalog each test; can be run once built with "> ctest --test-dir build -C Debug"
+add_gtest(test_constants tests/test_constants.cpp)
+add_gtest(test_exceptions tests/test_exceptions.cpp)
+add_gtest(test_polynomial tests/test_polynomial.cpp)
+add_gtest(test_fundamentals tests/test_fundamentals.cpp)

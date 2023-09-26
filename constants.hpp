@@ -1,9 +1,8 @@
 /**
- * 
+ * constants.hpp
  */
 
-#ifndef CUBEN_CONSTANTS
-#define CUBEN_CONSTANTS
+#pragma once 
 
 namespace cuben {
     namespace constants {
@@ -15,5 +14,3 @@ namespace cuben {
         extern const int iterLimit;
     }
 }
-
-#endif
