@@ -2,7 +2,7 @@
  * fundamentals.cpp
  */
 
-#include "fundamentals.hpp"
+#include "cuben.hpp"
 
 void cuben::fundamentals::printVecTrans(Eigen::VectorXf v) {
     std::cout << "[" << v(0);

@@ -2,7 +2,7 @@
  * constants.cpp
  */
 
-#include "constants.hpp"
+#include "cuben.hpp"
 
 const float cuben::constants::iterTol = (float)1e-8;
 const float cuben::constants::zeroTol = (float)1e-8;

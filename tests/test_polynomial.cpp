@@ -11,7 +11,7 @@ namespace cuben {
         namespace test_constants {
             TEST(TestPolynomial, PushPrintEval) {
                 // report and assert push construction
-                cuben::polynomial::Polynomial p;
+                cuben::Polynomial p;
                 p.push(0, 2);
                 p.push(0, 3);
                 p.push(0, -3);

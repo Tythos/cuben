@@ -2,14 +2,14 @@
  * polynomial.cpp
  */
 
-#include "polynomial.hpp"
+#include "cuben.hpp"
 
-cuben::polynomial::Polynomial::Polynomial() {
+cuben::Polynomial::Polynomial() {
     ri = Eigen::VectorXf();
     ci = Eigen::VectorXf();
 }
 		
-void cuben::polynomial::Polynomial::print() {
+void cuben::Polynomial::print() {
     int n = ci.rows();
     std::cout << "P(x) = ";
     if (n == 0) {
@@ -37,7 +37,7 @@ void cuben::polynomial::Polynomial::print() {
     }
 }
 		
-float cuben::polynomial::Polynomial::eval(float x) {
+float cuben::Polynomial::eval(float x) {
     int n = ci.rows();
     if (n == 0) { return 0; }
     float y = ci(0);
@@ -47,7 +47,7 @@ float cuben::polynomial::Polynomial::eval(float x) {
     return y;
 }
 
-void cuben::polynomial::Polynomial::push(float r, float c) {
+void cuben::Polynomial::push(float r, float c) {
     int n = ci.rows();
     ri.conservativeResize(n + 1);
     ci.conservativeResize(n + 1);
@@ -55,6 +55,10 @@ void cuben::polynomial::Polynomial::push(float r, float c) {
     ci(n) = c;
 }
 
-int cuben::polynomial::Polynomial::size() {
+int cuben::Polynomial::size() {
     return ci.rows();
+}
+
+int cuben::Polynomial::getNumPoints() {
+    return ri.rows();
 }

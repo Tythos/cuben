@@ -2,7 +2,7 @@
  * exceptions.cpp
  */
 
-#include "exceptions.hpp"
+#include "cuben.hpp"
 
 const char* cuben::exceptions::xBisectionSign::what() const throw() {
     return "Signs of f(a) and f(b) must be opposed and non-zero";
