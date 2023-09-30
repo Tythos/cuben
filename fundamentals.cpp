@@ -165,6 +165,17 @@ Eigen::MatrixXf cuben::fundamentals::vanDerMonde(Eigen::VectorXf x) {
     return A;
 }
 
+float cuben::fundamentals::frobNorm(Eigen::MatrixXf M) {
+    // computes the Frobenius norm of a matrix, M, defined by the square root of the sum of the square of all elements
+    float n = 0.0;
+    for (int i = 0; i < M.rows(); i += 1) {
+        for (int j = 0; j < M.cols(); j += 1) {
+            n += M(i,j) * M(i,j);
+        }
+    }
+    return std::sqrt(n);
+}
+ 
 bool cuben::fundamentals::isScalarWithinReltol(float actual, float expected, float relTol) {
     return std::abs(actual - expected) / expected < relTol;
 }
@@ -173,4 +184,10 @@ bool cuben::fundamentals::isVectorWithinReltol(Eigen::VectorXf actual, Eigen::Ve
     if (actual.size() != expected.size()) { return false; }
     Eigen::VectorXf diff = actual - expected;
     return diff.norm() < relTol;
+}
+
+bool cuben::fundamentals::isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol) {
+    if (actual.rows() != expected.rows()) { return false; }
+    if (actual.cols() != expected.cols()) { return false; }
+    return cuben::fundamentals::frobNorm(actual - expected) < relTol;
 }

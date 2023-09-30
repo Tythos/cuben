@@ -19,6 +19,29 @@ namespace cuben {
 				Eigen::Vector3f v3(2.0, 2.0, 2.0);
 				ASSERT_EQ(cuben::fundamentals::isVectorWithinReltol(v2, v1, 1e0), true);
 				ASSERT_EQ(cuben::fundamentals::isVectorWithinReltol(v3, v1, 1e0), false);
+
+				Eigen::MatrixXf actual(2, 2); actual << 1.001, 2.002, 3.003, 4.004;
+				Eigen::MatrixXf expected(2, 2); expected << 1, 2, 3, 4;
+				std::cout << "first frob norm (should succeed): " << cuben::fundamentals::frobNorm(actual - expected) << std::endl;
+				ASSERT_EQ(cuben::fundamentals::isMatrixWithinReltol(actual, expected, 0.02), true);
+
+				Eigen::MatrixXf actual2(2,2); actual2 << 1.1, 2.2, 3.3, 4.4;
+				std::cout << "second frob norm (should fail): " << cuben::fundamentals::frobNorm(actual2 - expected) << std::endl;
+				ASSERT_EQ(cuben::fundamentals::isMatrixWithinReltol(actual2, expected, 0.02), false);
+			}
+
+			TEST(TestFundamentals, FrobeniusTest) {
+				Eigen::MatrixXf M(2, 2); M << 1, 2, 3, 4;
+				float computed_norm = cuben::fundamentals::frobNorm(M);
+				float expected_norm = std::sqrt(30);
+				std::cout << "First Frobenius norm is " << computed_norm << ", expected " << expected_norm << std::endl;
+				ASSERT_EQ(cuben::fundamentals::isScalarWithinReltol(computed_norm, expected_norm, 1e-3), true);
+
+				Eigen::MatrixXf M2(2, 2); M2 << 1.01, 2.01, 3.01, 4.01;
+				float computed_norm2 = cuben::fundamentals::frobNorm(M2);
+				float expected_norm2 = std::sqrt(30);
+				std::cout << "Second Frobenius norm is " << computed_norm2 << ", expected " << expected_norm2 << std::endl;
+				ASSERT_EQ(cuben::fundamentals::isScalarWithinReltol(computed_norm2, expected_norm2, 1e-3), false);
 			}
 
 			TEST(TestFundamentals, ComputationalMetricsTest) {

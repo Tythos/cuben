@@ -24,6 +24,13 @@ Eigen::MatrixXf testdfdx(Eigen::VectorXf x) {
 	return dfdx;
 }
 
+Eigen::VectorXf myFunction(Eigen::VectorXf x) {
+	Eigen::VectorXf result(2);
+	result(0) = x(0) * x(0) + x(1) * x(1) - 2;
+	result(1) = x(0) * x(0) - x(1) * x(1);
+	return result;
+}
+
 namespace cuben {
 	namespace tests {
 		namespace test_systems {
@@ -37,13 +44,15 @@ namespace cuben {
 			}
 
 			TEST(TestSystems, LuFactorization) {
-				Eigen::MatrixXf A(3,3); A << 1, 2, -1,   2, 1, -2,   -3, 1, 1;
-				Eigen::MatrixXf L(3,3), U(3,3);
+				Eigen::MatrixXf A(2,2); A << 2, 1, 1, 3;
+				Eigen::MatrixXf L(2,2), U(2,2);
 				cuben::systems::luFactor(A, L, U);
 				std::cout << "L:" << L << std::endl;
 				std::cout << "U:" << U << std::endl;
-				// need matrix assertion; difference-dominant diagonals?
-				// ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(x, expected));
+				Eigen::MatrixXf expectedL(2,2); expectedL << 1, 0, 0.5, 1;
+				Eigen::MatrixXf expectedU(2,2); expectedU << 2, 1, 0, 2.5;
+				ASSERT_TRUE(cuben::fundamentals::isMatrixWithinReltol(L, expectedL));
+				ASSERT_TRUE(cuben::fundamentals::isMatrixWithinReltol(U, expectedU));
 			}
 
 			TEST(TestSystems, LuSolving) {
@@ -75,14 +84,13 @@ namespace cuben {
 			}
 
 			TEST(TestSystems, TestBroyden) {
-				std::cout.precision(16);
-				Eigen::VectorXf x0(2); x0 << 1.00f,-0.50f;
-				Eigen::VectorXf x1(2); x0 << 0.90f,-0.35f;
-				for (int i = 0; i < 16; i++) {
-					// cuben::constants::iterLimit = i + 1;
-					std::cout << "x (" << i + 1 << " iterations): " << cuben::systems::broydenTwo(&testf, x0, x1, Eigen::MatrixXf::Identity(2,2)).transpose() << std::endl;
-					// need better assertion/case here?
-				}
+				Eigen::VectorXf x0(2); x0 << 0.5, 0.5;
+				Eigen::VectorXf x1(2); x1 << 0.6, 0.6;
+				Eigen::MatrixXf B0 = Eigen::MatrixXf::Identity(2,2);
+				Eigen::VectorXf solution = cuben::systems::broydenTwo(myFunction, x0, x1, B0);
+				std::cout << "Broyden's method: "; cuben::fundamentals::printVecTrans(solution); std::cout << std::endl;
+				Eigen::VectorXf expected(2); expected << 1.0, 1.0;
+				ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(solution, expected));
 			}
 		}
 	}

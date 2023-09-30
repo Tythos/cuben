@@ -103,8 +103,10 @@ namespace cuben {
 		Eigen::VectorXf safeResize(Eigen::VectorXf A, int nEls);
 		Eigen::MatrixXf safeResize(Eigen::MatrixXf A, int nRows, int nCols);
 		Eigen::MatrixXf vanDerMonde(Eigen::VectorXf x);        
+        float frobNorm(Eigen::MatrixXf M);
         bool isScalarWithinReltol(float actual, float expected, float relTol=1e-3);
         bool isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol=1e-3);
+        bool isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol=1e-3);
     }
 
     class Polynomial {
