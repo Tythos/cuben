@@ -2,7 +2,7 @@
  * tests/test_contants.cpp
 */
 
-#include "constants.cpp"
+#include "cuben.hpp"
 #include "gtest/gtest.h"
 
 namespace cuben {

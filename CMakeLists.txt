@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME} STATIC
     polynomial.cpp
     fundamentals.cpp
     equations.cpp
+    systems.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -34,3 +35,4 @@ add_gtest(test_exceptions tests/test_exceptions.cpp)
 add_gtest(test_polynomial tests/test_polynomial.cpp)
 add_gtest(test_fundamentals tests/test_fundamentals.cpp)
 add_gtest(test_equations tests/test_equations.cpp)
+add_gtest(test_systems tests/test_systems.cpp)

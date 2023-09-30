@@ -137,4 +137,25 @@ namespace cuben {
 		float iqi(float(*f)(float), float x0, float x1);
 		float brents(float(*f)(float), float a, float b);
     }
+
+    namespace systems {
+		Eigen::VectorXf gaussElim(Eigen::MatrixXf A, Eigen::VectorXf y);
+		void luFactor(Eigen::MatrixXf A, Eigen::MatrixXf &L, Eigen::MatrixXf &U);
+		Eigen::VectorXf luSolve(Eigen::MatrixXf A, Eigen::VectorXf y);
+		Eigen::VectorXf residual(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf x);
+		float relForwError(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf xAppx, Eigen::VectorXf xExct);
+		float relBackError(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf xAppx);
+		float errMagFactor(Eigen::MatrixXf A, Eigen::VectorXf y, Eigen::VectorXf xAppx, Eigen::VectorXf xExct);
+		float condNum(Eigen::MatrixXf A);
+		Eigen::VectorXf paluSolve(Eigen::MatrixXf A, Eigen::VectorXf y);
+		void lduFactor(Eigen::MatrixXf A, Eigen::MatrixXf &L, Eigen::MatrixXf &D, Eigen::MatrixXf &U);
+		bool isStrictDiagDom(Eigen::MatrixXf A);
+		Eigen::VectorXf jacobiIteration(Eigen::MatrixXf A, Eigen::VectorXf y);
+		Eigen::VectorXf gaussSidel(Eigen::MatrixXf A, Eigen::VectorXf y);
+		Eigen::VectorXf sor(Eigen::MatrixXf A, Eigen::VectorXf y, float c);
+		Eigen::VectorXf conjGrad(Eigen::MatrixXf A, Eigen::VectorXf y);
+		Eigen::VectorXf multiVariateNewton(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf), Eigen::VectorXf x0);
+		Eigen::VectorXf broydenOne(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::VectorXf x0, Eigen::VectorXf x1, Eigen::MatrixXf A0);
+		Eigen::VectorXf broydenTwo(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::VectorXf x0, Eigen::VectorXf x1, Eigen::MatrixXf B0);
+    }
 }
