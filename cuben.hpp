@@ -14,6 +14,10 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
+#ifndef M_PI
+    #define M_PI 3.1415926535897932384626433
+#endif
+
 namespace cuben {
     namespace constants {
         extern const float iterTol;
@@ -160,4 +164,41 @@ namespace cuben {
 		Eigen::VectorXf broydenOne(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::VectorXf x0, Eigen::VectorXf x1, Eigen::MatrixXf A0);
 		Eigen::VectorXf broydenTwo(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::VectorXf x0, Eigen::VectorXf x1, Eigen::MatrixXf B0);
     }
+
+	namespace interp {
+		enum EndpointCondition { EC_NATURAL, EC_CLAMPED, EC_PARABOLIC, EC_NOTAKNOT };
+		float lagrange(Eigen::VectorXf xi, Eigen::VectorXf yi, float x);
+		float sinInterp(float y);
+		cuben::Polynomial chebyshev(float(*f)(float), float xMin, float xMax, int n);
+		Eigen::VectorXf cheb(Eigen::VectorXf t, int order);
+		Eigen::VectorXf dchebdt(Eigen::VectorXf t, int order);
+		Eigen::VectorXf d2chebdt2(Eigen::VectorXf t, int order);
+		Eigen::VectorXf chebSamp(float lhs, int n, float rhs);
+		float cubeFit(Eigen::VectorXf xi, Eigen::VectorXf yi, float x);
+    }
+
+    class CubicSplines {
+    private:
+    protected:
+        Eigen::VectorXf xi;
+        Eigen::VectorXf yi;
+    public:
+        cuben::interp::EndpointCondition ec;
+        CubicSplines();
+        void push(float x, float y);
+        float eval(float x);
+        int getNumPoints();
+    };
+    
+    class BezierSpline {
+    private:
+    protected:
+    public:
+        Eigen::Vector2f pi;
+        Eigen::Vector2f pf;
+        Eigen::Vector2f ci;
+        Eigen::Vector2f cf;
+        BezierSpline();
+        Eigen::Vector2f eval(float t);
+    };
 }
