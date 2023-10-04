@@ -62,7 +62,7 @@ Eigen::VectorXf cuben::interp::cheb(Eigen::VectorXf t, int order) {
     } else if (order == 1) {
         return Eigen::VectorXf(t);
     } else {
-        return 2.0f * t.cwiseProduct(cheb(t, order - 1)) - cheb(t, order - 2);
+        return 2.0f * t.cwiseProduct(cuben::interp::cheb(t, order - 1)) - cuben::interp::cheb(t, order - 2);
     }
 }
 
@@ -75,7 +75,7 @@ Eigen::VectorXf cuben::interp::dchebdt(Eigen::VectorXf t, int order) {
     } else if (order == 2) {
         return 4.0f * Eigen::VectorXf(t);
     } else {
-        return 2.0f * cheb(t, order - 1) + 2.0f * t.cwiseProduct(dchebdt(t, order - 1)) - dchebdt(t, order - 2);
+        return 2.0f * cuben::interp::cheb(t, order - 1) + 2.0f * t.cwiseProduct(cuben::interp::dchebdt(t, order - 1)) - cuben::interp::dchebdt(t, order - 2);
     }
 }
 
@@ -90,7 +90,7 @@ Eigen::VectorXf cuben::interp::d2chebdt2(Eigen::VectorXf t, int order) {
     } else if (order == 3) {
         return 12.0f * t;
     } else {
-        return 4.0f * dchebdt(t, order - 1) + 2 * t.cwiseProduct(d2chebdt2(t, order - 1)) - d2chebdt2(t, order - 2);
+        return 4.0f * cuben::interp::dchebdt(t, order - 1) + 2 * t.cwiseProduct(cuben::interp::d2chebdt2(t, order - 1)) - cuben::interp::d2chebdt2(t, order - 2);
     }
 }
 
