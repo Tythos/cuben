@@ -1,5 +1,5 @@
 /**
- * tests/test_polynomial.cpp
+ * tests/test_Polynomial.cpp
  */
 
 #include <iostream>
@@ -8,7 +8,7 @@
 
 namespace cuben {
     namespace tests {
-        namespace test_constants {
+        namespace test_Polynomial {
             TEST(TestPolynomial, PushPrintEval) {
                 // report and assert push construction
                 cuben::Polynomial p;

@@ -177,14 +177,14 @@ namespace cuben {
 		float cubeFit(Eigen::VectorXf xi, Eigen::VectorXf yi, float x);
     }
 
-    class CubicSplines {
+    class CubicSpline {
     private:
     protected:
         Eigen::VectorXf xi;
         Eigen::VectorXf yi;
     public:
         cuben::interp::EndpointCondition ec;
-        CubicSplines();
+        CubicSpline();
         void push(float x, float y);
         float eval(float x);
         int getNumPoints();
@@ -193,12 +193,13 @@ namespace cuben {
     class BezierSpline {
     private:
     protected:
+        Eigen::VectorXf xi;
+        Eigen::VectorXf yi;
+        Eigen::VectorXf dydxi;
     public:
-        Eigen::Vector2f pi;
-        Eigen::Vector2f pf;
-        Eigen::Vector2f ci;
-        Eigen::Vector2f cf;
         BezierSpline();
+        void push(float x, float y, float dydx);
         Eigen::Vector2f eval(float t);
+        int getNumPoints();
     };
 }

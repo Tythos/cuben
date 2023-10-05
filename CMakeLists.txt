@@ -19,6 +19,8 @@ add_library(${PROJECT_NAME} STATIC
     equations.cpp
     systems.cpp
     interp.cpp
+    CubicSpline.cpp
+    BezierSpline.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -33,8 +35,10 @@ endfunction()
 # add, link, catalog each test; can be run once built with "> ctest --test-dir build -C Debug"
 add_gtest(test_constants tests/test_constants.cpp)
 add_gtest(test_exceptions tests/test_exceptions.cpp)
-add_gtest(test_polynomial tests/test_polynomial.cpp)
+add_gtest(test_Polynomial tests/test_Polynomial.cpp)
 add_gtest(test_fundamentals tests/test_fundamentals.cpp)
 add_gtest(test_equations tests/test_equations.cpp)
 add_gtest(test_systems tests/test_systems.cpp)
 add_gtest(test_interp tests/test_interp.cpp)
+add_gtest(test_CubicSpline tests/test_CubicSpline.cpp)
+add_gtest(test_BezierSpline tests/test_BezierSpline.cpp)
