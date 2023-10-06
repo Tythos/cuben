@@ -21,6 +21,7 @@ add_library(${PROJECT_NAME} STATIC
     interp.cpp
     CubicSpline.cpp
     BezierSpline.cpp
+    leastsq.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -42,3 +43,4 @@ add_gtest(test_systems tests/test_systems.cpp)
 add_gtest(test_interp tests/test_interp.cpp)
 add_gtest(test_CubicSpline tests/test_CubicSpline.cpp)
 add_gtest(test_BezierSpline tests/test_BezierSpline.cpp)
+add_gtest(test_leastsq tests/test_leastsq.cpp)

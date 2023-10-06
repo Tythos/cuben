@@ -108,9 +108,9 @@ namespace cuben {
 		Eigen::MatrixXf safeResize(Eigen::MatrixXf A, int nRows, int nCols);
 		Eigen::MatrixXf vanDerMonde(Eigen::VectorXf x);        
         float frobNorm(Eigen::MatrixXf M);
-        bool isScalarWithinReltol(float actual, float expected, float relTol=1e-3);
-        bool isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol=1e-3);
-        bool isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol=1e-3);
+        bool isScalarWithinReltol(float actual, float expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
+        bool isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
+        bool isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
     }
 
     class Polynomial {
@@ -202,4 +202,21 @@ namespace cuben {
         Eigen::Vector2f eval(float t);
         int getNumPoints();
     };
+
+	namespace leastsq {
+		Eigen::VectorXf invertNormal(Eigen::MatrixXf A, Eigen::VectorXf y);
+        Eigen::VectorXf invertSvd(Eigen::MatrixXf A, Eigen::VectorXf y);
+		Eigen::VectorXf fitPolynomial(Eigen::VectorXf xi, Eigen::VectorXf yi, int degree);
+		Eigen::VectorXf fitPeriodic(Eigen::VectorXf xi, Eigen::VectorXf yi, int degree);
+		Eigen::VectorXf fitExponential(Eigen::VectorXf xi, Eigen::VectorXf yi);
+		Eigen::VectorXf fitPower(Eigen::VectorXf xi, Eigen::VectorXf yi);
+		Eigen::VectorXf fitGamma(Eigen::VectorXf xi, Eigen::VectorXf yi);
+		Eigen::VectorXf fitCompoundExpo(Eigen::VectorXf xi, Eigen::VectorXf yi);
+		Eigen::MatrixXf computeGramSchmidt(Eigen::MatrixXf A);
+		void qrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::MatrixXf &R);
+		Eigen::VectorXf qrLeastSq(Eigen::MatrixXf A, Eigen::VectorXf b);
+		Eigen::MatrixXf householderReflector(Eigen::VectorXf a, Eigen::VectorXf b);
+		void hhQrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::MatrixXf &R);
+        Eigen::VectorXf nonLinearGaussNewton(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf), Eigen::VectorXf x0, int nIter);
+	}    
 }

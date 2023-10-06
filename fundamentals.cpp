@@ -176,18 +176,47 @@ float cuben::fundamentals::frobNorm(Eigen::MatrixXf M) {
     return std::sqrt(n);
 }
  
-bool cuben::fundamentals::isScalarWithinReltol(float actual, float expected, float relTol) {
-    return std::abs(actual - expected) / expected < relTol;
+bool cuben::fundamentals::isScalarWithinReltol(float actual, float expected, float relTol, bool isDebuggedWhenFalse) {
+    bool isSatisfied = false;
+    if (std::abs(expected) < relTol) {
+        isSatisfied = std::abs(actual - expected) < relTol;
+    } else {
+        isSatisfied = std::abs(actual - expected) / std::abs(expected) < relTol;
+    }
+    if (!isSatisfied && isDebuggedWhenFalse) {
+        std::cout << "[RELTOL SCALAR FAILED]\n\tactual: " << actual << "\n\texpected: " << expected << std::endl;
+    }
+    return isSatisfied;
 }
 
-bool cuben::fundamentals::isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol) {
-    if (actual.size() != expected.size()) { return false; }
-    Eigen::VectorXf diff = actual - expected;
-    return diff.norm() < relTol;
+bool cuben::fundamentals::isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol, bool isDebuggedWhenFalse) {
+    bool isSatisfied = true;
+    if (actual.size() != expected.size()) { isSatisfied = false; }
+    if (isSatisfied) {
+        Eigen::VectorXf diff = actual - expected;
+        isSatisfied = diff.norm() < relTol;
+    }
+    if (!isSatisfied && isDebuggedWhenFalse) {
+        std::cout << "[RELTOL VECTOR FAILED]\n\tactual: ";
+        cuben::fundamentals::printVecTrans(actual);
+        std::cout << "\n\texpected: ";
+        cuben::fundamentals::printVecTrans(expected);
+        std::cout << std::endl;
+    }
+    return isSatisfied;
 }
 
-bool cuben::fundamentals::isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol) {
-    if (actual.rows() != expected.rows()) { return false; }
-    if (actual.cols() != expected.cols()) { return false; }
-    return cuben::fundamentals::frobNorm(actual - expected) < relTol;
+bool cuben::fundamentals::isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol, bool isDebuggedWhenFalse) {
+    bool isSatisfied = true;
+    if (actual.rows() != expected.rows()) { isSatisfied = false; }
+    if (actual.cols() != expected.cols()) { isSatisfied = false; }
+    if (isSatisfied) {
+        isSatisfied = cuben::fundamentals::frobNorm(actual - expected) < relTol;
+    }
+    if (!isSatisfied && isDebuggedWhenFalse) {
+        std::cout << "[RELTOL MATRIX FAILED]" << std::endl;
+        std::cout << "\tactual: " << actual << std::endl;
+        std::cout << "\texpected: " << expected << std::endl;
+    }
+    return isSatisfied;
 }
