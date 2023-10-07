@@ -61,7 +61,7 @@ Eigen::VectorXf cuben::leastsq::fitExponential(Eigen::VectorXf xi, Eigen::Vector
     if (n != yi.rows()) {
         throw cuben::exceptions::xMismatchedDims();
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i += 1) {
         A(i,0) = 1;
         A(i,1) = xi(i);
         b(i) = std::log(yi(i));
@@ -79,7 +79,7 @@ Eigen::VectorXf cuben::leastsq::fitPower(Eigen::VectorXf xi, Eigen::VectorXf yi)
     if (n != yi.rows()) {
         throw cuben::exceptions::xMismatchedDims();
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i += 1) {
         A(i,0) = 1;
         A(i,1) = std::log(xi(i));
         b(i) = std::log(yi(i));
@@ -97,7 +97,7 @@ Eigen::VectorXf cuben::leastsq::fitGamma(Eigen::VectorXf xi, Eigen::VectorXf yi)
     if (n != yi.rows()) {
         throw cuben::exceptions::xMismatchedDims();
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i += 1) {
         A(i,0) = 1;
         A(i,1) = std::log(xi(i));
         b(i) = std::log(yi(i));
@@ -115,7 +115,7 @@ Eigen::VectorXf cuben::leastsq::fitCompoundExpo(Eigen::VectorXf xi, Eigen::Vecto
     if (n != yi.rows()) {
         throw cuben::exceptions::xMismatchedDims();
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i += 1) {
         A(i,0) = 1;
         A(i,1) = std::log(xi(i));
         A(i,2) = xi(i);
@@ -129,9 +129,9 @@ Eigen::VectorXf cuben::leastsq::fitCompoundExpo(Eigen::VectorXf xi, Eigen::Vecto
 Eigen::MatrixXf cuben::leastsq::computeGramSchmidt(Eigen::MatrixXf A) {
     Eigen::MatrixXf Q(A.rows(), A.cols());
     Q.col(0) = A.col(0) / A.col(0).norm();
-    for (int i = 1; i < A.cols(); i++) {
+    for (int i = 1; i < A.cols(); i += 1) {
         Q.col(i) = Q.col(0) * (Q.col(0).transpose() * A.col(i));
-        for (int j = 1; j < i; j++) {
+        for (int j = 1; j < i; j += 1) {
             Q.col(i) += Q.col(j) * (Q.col(j).transpose() * A.col(i));
         }
         Q.col(i) = A.col(i) - Q.col(i);
@@ -145,16 +145,14 @@ void cuben::leastsq::qrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::Matr
     R = Eigen::MatrixXf::Zero(A.cols(), A.cols());
     R(0,0) = A.col(0).norm();
     Q.col(0) = A.col(0) / R(0,0);
-    for (int i = 1; i < A.cols(); i++) {
-        Q.col(i) = Q.col(0) * (Q.col(0).transpose() * A.col(i));
-        R(0,i) = Q.col(0).transpose() * A.col(i);
-        for (int j = 1; j < i; j++) {
-            R(j,i) = Q.col(j).transpose() * A.col(i);
-            Q.col(i) += Q.col(j) * R(j,i);
+    for (int i = 1; i < A.cols(); i += 1) {
+        Eigen::VectorXf Ai = A.col(i);
+        for (int j = 0; j < i; j += 1) {
+            R(j,i) = Q.col(j).transpose() * Ai;
+            Ai -= R(j,i) * Q.col(j);
         }
-        Q.col(i) = A.col(i) - Q.col(i);
-        R(i,i) = Q.col(i).norm();
-        Q.col(i) = Q.col(i) / R(i,i);
+        R(i,i) = Ai.norm();
+        Q.col(i) = Ai / R(i,i);
     }
 }
 
@@ -182,59 +180,40 @@ void cuben::leastsq::hhQrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::Ma
     Eigen::VectorXf w;
     Eigen::MatrixXf subMat(0,0);
     Eigen::MatrixXf Hfull(0,0);
-
     Q = Eigen::MatrixXf::Identity(A.rows(), A.rows());
     R = A;
-    for (int i = 0; i < nIterations; i++) {
-        // Compute householder reflector for reduction of this column of A
+    for (int i = 0; i < nIterations; i += 1) {
         subMat = R.block(i, i, R.rows() - i, R.cols() - i);
         x = subMat.col(0);
         w = Eigen::VectorXf::Zero(x.rows());
-        //w(0) = x(0) < 0 ? x.norm() : -x.norm();
         w(0) = x.norm();
         H = cuben::leastsq::householderReflector(x, w);
-        
-        // Update Q and R computations
         Hfull = Eigen::MatrixXf::Identity(A.rows(), A.rows());
         Hfull.block(i, i, A.rows() - i, A.rows() - i) = H;
         Q = Q * Hfull;
         R = Hfull * R;
-        
-        // Correct R for drift
-        for (int j = 0; j <= i; j++) {
-            for (int k = j + 1; k < R.rows(); k++) {
+        for (int j = 0; j <= i; j += 1) {
+            for (int k = j + 1; k < R.rows(); k += 1) {
                 R(k,j) = 0.0f;
             }
         }
-        
-        // Debug report
-        std::cout << "i = " << i << std::endl;
-        std::cout << "subMat:" << std::endl << subMat << std::endl;
-        std::cout << "H:" << std::endl << H << std::endl;
-        std::cout << "Q:" << std::endl << Q << std::endl;
-        std::cout << "R:" << std::endl << R << std::endl << std::endl;
     }
 }
 
-Eigen::VectorXf cuben::leastsq::nonLinearGaussNewton(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf), Eigen::VectorXf x0, int nIter) {
+Eigen::VectorXf cuben::leastsq::nonLinearGaussNewton(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf), Eigen::VectorXf x0) {
     Eigen::VectorXf f0 = f(x0);
     Eigen::MatrixXf dfdx0 = dfdx(x0);
-    Eigen::MatrixXf A;
-    Eigen::VectorXf b;
-    Eigen::VectorXf dx(x0.rows()); dx(0) = cuben::constants::iterTol + 1.0f;
-    int nf = f0.rows();
-    int nx = x0.rows();
-    if (nf != dfdx0.rows() || dfdx0.cols() != nx) {
+    Eigen::VectorXf dx(x0.rows());
+    if (f0.rows() != dfdx0.rows() || dfdx0.cols() != x0.rows()) {
         throw cuben::exceptions::xMismatchedDims();
     }
-    
-    int n = 0;
-    while (dx.sum() > cuben::constants::iterTol && n < cuben::constants::iterLimit) {
-//			for (int i = 0; i < nIter; i++) {
-        n++;
-        A = dfdx0.transpose() * dfdx0;
-        b = -dfdx0.transpose() * f0;
-        dx = A.inverse() * b;
+    for (int n = 0; n < cuben::constants::iterLimit; n += 1) {
+        Eigen::MatrixXf A = dfdx0.transpose() * dfdx0 + Eigen::MatrixXf::Identity(x0.rows(), x0.rows());
+        Eigen::VectorXf b = -dfdx0.transpose() * f0;
+        dx = A.lu().solve(b);
+        if (dx.norm() < cuben::constants::iterTol) {
+            break;
+        }
         x0 = x0 + dx;
         f0 = f(x0);
         dfdx0 = dfdx(x0);
