@@ -218,5 +218,49 @@ namespace cuben {
 		Eigen::MatrixXf householderReflector(Eigen::VectorXf a, Eigen::VectorXf b);
 		void hhQrFactor(Eigen::MatrixXf A, Eigen::MatrixXf &Q, Eigen::MatrixXf &R);
         Eigen::VectorXf nonLinearGaussNewton(Eigen::VectorXf(*f)(Eigen::VectorXf), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf), Eigen::VectorXf x0);
-	}    
+	}
+
+    namespace diffint {
+		float dfdx_2pfd(float(*f)(float), float x, float h);
+		float dfdx_3pcd(float(*f)(float), float x, float h);
+		float d2fdx2_3pcd(float(*f)(float), float x, float h);
+		float dfdx_5pcd(float(*f)(float), float x, float h);
+		float d2fdx2_5pcd(float(*f)(float), float x, float h);
+		float dfdx_cubic(float(*f)(float), float x, float h);
+		float intfdx_trap(float(*f)(float), float x0, float x1);
+		float intfdx_simp(float(*f)(float), float x0, float x2);
+		float intfdx_simp38(float(*f)(float), float x0, float x3);
+		float intfdx_mid(float(*f)(float), float x0, float x1);
+		float intfdx_compTrap(float(*f)(float), float x0, float x1, int n);
+		float intfdx_compSimp(float(*f)(float), float x0, float x1, int n);
+		float intfdx_compMid(float(*f)(float), float x0, float x1, int n);
+		float intfdx_romberg(float(*f)(float), float x0, float x1, int n);
+		float intfdx_adaptTrap(float(*f)(float), float x0, float x1, float tol);
+		float intfdx_adaptSimp(float(*f)(float), float x0, float x1, float tol);
+		float intfdx_gaussQuad(float(*f)(float), float x0, float x1, int n);
+    }
+
+    namespace ode {
+		Eigen::VectorXf euler(float(*dxdt)(float, float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf trap(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf taylor2nd(float(*dxdt)(float,float), float(*d2xdt2)(float,float), float(*d2xdtdx)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf rk4(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::MatrixXf eulerSys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::VectorXf ti, Eigen::VectorXf x0);
+		Eigen::MatrixXf trapSys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::VectorXf ti, Eigen::VectorXf x0);
+		Eigen::MatrixXf midSys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::VectorXf ti, Eigen::VectorXf x0);
+		Eigen::MatrixXf rk4Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::VectorXf ti, Eigen::VectorXf x0);
+		void rk23Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tInt, Eigen::VectorXf x0, Eigen::VectorXf& ti, Eigen::MatrixXf& xi);
+		void bs23Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tInt, Eigen::VectorXf x0, Eigen::VectorXf& ti, Eigen::MatrixXf& xi);
+		void rk45Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tInt, Eigen::VectorXf x0, Eigen::VectorXf& ti, Eigen::MatrixXf& xi);
+		void dp45Sys(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tInt, Eigen::VectorXf x0, Eigen::VectorXf& ti, Eigen::MatrixXf& xi);
+		Eigen::VectorXf impEuler(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf impTrap(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modab2s(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modab3s(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modab4s(float(*dxdt)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modam2s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modms2s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modam3s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf modam4s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
+    }
 }
