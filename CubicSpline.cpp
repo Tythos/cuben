@@ -33,10 +33,10 @@ void cuben::CubicSpline::push(float x, float y) {
 }
 
 float cuben::CubicSpline::eval(float x) {
-    static Eigen::VectorXf ai;
-    static Eigen::VectorXf bi;
-    static Eigen::VectorXf ci;
-    static Eigen::VectorXf di;
+    Eigen::VectorXf ai;
+    Eigen::VectorXf bi;
+    Eigen::VectorXf ci;
+    Eigen::VectorXf di;
     int n = xi.rows();
     int ndxLeft = 0;
 

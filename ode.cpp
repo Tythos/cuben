@@ -143,21 +143,22 @@ Eigen::MatrixXf cuben::ode::rk4Sys(void(*dxdt)(float, Eigen::VectorXf, Eigen::Ve
     int nSteps = ti.rows();
     int nDims = x0.rows();
     float h = 1.0f;
-    Eigen::VectorXf s1(nDims);
-    Eigen::VectorXf s2(nDims);
-    Eigen::VectorXf s3(nDims);
-    Eigen::VectorXf s4(nDims);
+    Eigen::VectorXf k1(nDims);
+    Eigen::VectorXf k2(nDims);
+    Eigen::VectorXf k3(nDims);
+    Eigen::VectorXf k4(nDims);
     Eigen::MatrixXf xi(nSteps,nDims);
     for (int i = 0; i < nSteps; i++) {
         if (i == 0) {
             xi.row(i) = x0;
         } else {
             h = ti(i) - ti(i-1);
-            dxdt(ti(i-1), xi.row(i-1), s1);
-            dxdt(ti(i-1) + 0.5f * h, xi.row(i-1) + 0.5f * h * s1, s2);
-            dxdt(ti(i-1) + 0.5f * h, xi.row(i-1) + 0.5f * h * s2, s3);
-            dxdt(ti(i-1) + h, xi.row(i-1) + h * s3, s4);
-            xi.row(i) = xi.row(i-1) + (1.0f / 6.0f) * h * (s1 + 2 * s2 + 2 * s2 + s4);
+            Eigen::VectorXf xPrev = xi.row(i-1);
+            dxdt(ti(i-1), xPrev, k1);
+            dxdt(ti(i-1) + 0.5f * h, xPrev + 0.5f * h * k1, k2);
+            dxdt(ti(i-1) + 0.5f * h, xPrev + 0.5f * h * k2, k3);
+            dxdt(ti(i-1) + h, xPrev + h * k3, k4);
+            xi.row(i) = xPrev + (h / 6.0f) * (k1 + 2.0f * k2 + 2.0f * k3 + k4);
         }
     }
     return xi;
