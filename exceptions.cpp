@@ -44,10 +44,14 @@ const char* cuben::exceptions::xBelowMinStepSize::what() const throw() {
     return "Could not meet tolerance without reducing step size below limit";
 }
 
-const char * cuben::exceptions::xInvalidSubIndexMapping::what() const throw() {
+const char* cuben::exceptions::xInvalidSubIndexMapping::what() const throw() {
     return "Invalid conversion between subindices and linear indices attempted; indices may be out of bounds, or dimensions may be incorrectly specified";
 }
 
-const char * cuben::exceptions::xInvalidRoll::what() const throw() {
+const char* cuben::exceptions::xInvalidRoll::what() const throw() {
     return "This roll cannot be performed with the current instance";
+}
+
+const char* cuben::exceptions::xInsufficientDomain::what() const throw() {
+    return "The given domain has insufficient points to solve the system with this method";
 }

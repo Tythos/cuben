@@ -85,6 +85,33 @@ float fImp(float t, float x) {
     return -1.0f;
 }
 
+float another_test_dxdt(float t, float x) {
+    return -0.1f * x;
+}
+
+float simpleODE(float t, float x) {
+    (void)t;
+    return 2.0f * x;
+}
+
+float fIndTest(float t, float x) {
+    return t * x;
+}
+
+float fImpTest(float t, float x) {
+    return t + x;
+}
+
+float yet_another_test(float t, float x) {
+    return -0.5f * x;
+}
+
+float harmonicOscillator(float t, float x) {
+    const float zeta = 0.5f;
+    const float omega = 2.0f;
+    return -2.0f * zeta * omega * x - omega * omega * x;
+}
+
 namespace cuben {
     namespace test {
         namespace test_ode {
@@ -343,16 +370,105 @@ namespace cuben {
             }
 
             TEST(TestOde, ImpEulerTest) {
-                Eigen::VectorXf ti(10);
                 const int N = 10;
+                Eigen::VectorXf ti(N);
                 for (int i = 0; i < N; i += 1) {
-                    ti(i) =(float)i / 10.0f;
+                    ti(i) = (float)i / 10.0f;
                 }
                 float x0 = 1.0f;
                 Eigen::VectorXf xi = cuben::ode::impEuler(fInd, fImp, ti, x0);
                 Eigen::VectorXf xi_ref(N); xi_ref <<
                     1.0f, 0.909091f, 0.826446f, 0.751315f, 0.683013f, 0.620921f, 0.564474f, 0.513158f, 0.466507f, 0.424098f;
                 ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(xi, xi_ref, 1e-3, true));
+            }
+
+            TEST(TestOde, ImpTrapTest) {
+                const int N = 10;
+                Eigen::VectorXf ti(N);
+                for (int i = 0; i < N; i += 1) {
+                    ti(i) = (float)i / 10.0f;
+                }
+                float x0 = 1.0f;
+                Eigen::VectorXf xi = cuben::ode::impTrap(fInd, fImp, ti, x0);
+                Eigen::VectorXf xi_ref(N); xi_ref <<
+                    1.0f, 0.904762f, 0.818594f, 0.740633f, 0.670096f, 0.606278f, 0.548537f, 0.496295f, 0.449029f, 0.406264f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(xi, xi_ref, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAb2sTest) {
+                const int N = 10;
+                Eigen::VectorXf ti(N);
+                for (int i = 0; i < N; i += 1) {
+                    ti(i) = (float)i / 10.0f;
+                }
+                float x0 = 1.0f;
+                Eigen::VectorXf xi = cuben::ode::modab2s(fInd, ti, x0);
+                Eigen::VectorXf xi_ref(N); xi_ref << 
+                    1.0f, 0.905f, 0.81925f, 0.741612f, 0.671333f, 0.607714f, 0.550123f, 0.49799f, 0.450798f, 0.408078f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(xi, xi_ref, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAb3sTest) {
+                Eigen::VectorXf ti(5); ti <<
+                    0.0, 1.0, 2.0, 3.0, 4.0;
+                Eigen::VectorXf xi = cuben::ode::modab3s(another_test_dxdt, ti, 1.0f);
+                Eigen::VectorXf expected(5); expected <<
+                    1.0f, 0.905f, 0.862125f, 0.775884f, 0.704415f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(xi, expected, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAb4sTest) {
+                Eigen::VectorXf ti(6); ti <<
+                    0.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f;
+                Eigen::VectorXf xi = cuben::ode::modab4s(simpleODE, ti, 1.0f);
+                Eigen::VectorXf expected(6); expected <<
+                    1.0f, 1.22f, 1.353f, 1.62965f, 2.01251f, 2.45935f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(xi, expected, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAm2sTest) {
+                Eigen::VectorXf ti(5); ti <<
+                    0.0, 0.1, 0.2, 0.3, 0.4;
+                Eigen::VectorXf result = cuben::ode::modam2s(fIndTest, fImpTest, ti, 1.0);
+                Eigen::VectorXf expected(5); expected <<
+                      1.0f, 1.00503f, 1.02023f, 1.04607f, 1.08335;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(result, expected, 1e-3, true));
+            }
+
+            TEST(TestOde, ModMs2sTest) {
+                const int N = 10;
+                Eigen::VectorXf ti(N);
+                for (int i = 0; i < N; i += 1) {
+                    ti(i) = (float)i / 10.0;
+                }
+                Eigen::VectorXf result = cuben::ode::modms2s(yet_another_test, yet_another_test, ti, 1.0);
+                Eigen::VectorXf expected(N); expected <<
+                    1.0f, 0.951219f, 0.904838f, 0.860698f, 0.818732f, 0.778791f, 0.74082f, 0.704679f, 0.670322f, 0.637619f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(result, expected, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAm3sTest) {
+                const int N = 10;
+                Eigen::VectorXf ti(N);
+                for (int i = 0; i < N; i += 1) {
+                    ti(i) = std::powf((float)i, 1.1f) / 10.0;
+                }
+                Eigen::VectorXf result = cuben::ode::modam3s(fInd, fImp, ti, 1.0f);
+                Eigen::VectorXf expected(N); expected << 
+                    1.0f, 0.904762f, 0.810484f, 0.731072f, 0.656147f, 0.583277f, 0.51594f, 0.454712f, 0.399601f, 0.350331f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(result, expected, 1e-3, true));
+            }
+
+            TEST(TestOde, ModAm4sTest) {
+                const int N = 10;
+                Eigen::VectorXf ti(N);
+                for (int i = 0; i < N; i += 1) {
+                    ti(i) = std::powf((float)i, 1.1f) / 10.0;
+                }
+                Eigen::VectorXf result = cuben::ode::modam4s(harmonicOscillator, harmonicOscillator, ti, 2.0f);
+                Eigen::VectorXf expected(N); expected <<
+                    2.0f, 1.07692, 0.550925, 0.306448, 0.144486, 0.0819095, 0.0365785, 0.0198439, 0.00807169, 0.00442807;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(result, expected, 1e-3, true));
             }
         }
     }

@@ -88,6 +88,11 @@ namespace cuben {
         public:
             virtual const char* what() const throw();
         };
+
+        class xInsufficientDomain : public std::exception {
+        public:
+            virtual const char* what() const throw();
+        };
     }
 
     namespace fundamentals {

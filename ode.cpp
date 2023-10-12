@@ -444,22 +444,20 @@ Eigen::VectorXf cuben::ode::modab2s(float(*dxdt)(float, float), Eigen::VectorXf 
 
 Eigen::VectorXf cuben::ode::modab3s(float(*dxdt)(float, float), Eigen::VectorXf ti, float x0) {
     int n = ti.rows();
-    float dt = 0.0f;
+    if (n < 4) {
+        throw cuben::exceptions::xInsufficientDomain();
+    }
     Eigen::VectorXf xi(n);
-    for (int i = 0; i < n; i++) {
-        if (i == 0) {
-            xi(i) = x0;
-        } else if (i == 1) {
-            // Fall back to trapezoid
-            dt = ti(i) - ti(i-1);
-            xi(i) = xi(i-1) + dt * 0.5f * (dxdt(ti(i-1), xi(i-1)) + dxdt(ti(i), xi(i-1) + dt * dxdt(ti(i-1), xi(i-1))));
+    xi(0) = x0;
+    Eigen::VectorXf dti = ti.tail(n-1) - ti.head(n-1);
+    for (int i = 1; i < n; i++) {
+        if (i == 1) {
+            xi(i) = xi(i-1) + dti(i-1) * 0.5f * (dxdt(ti(i-1), xi(i-1)) + dxdt(ti(i), xi(i-1) + dti(i-1) * dxdt(ti(i-1), xi(i-1))));
         } else if (i == 2) {
-            // Fall back to modab2s
-            dt = 0.5f * (ti(i) - ti(i-2));
-            xi(i) = xi(i-1) + dt * dt * (1.5f * dxdt(ti(i-1),xi(i-1)) / (ti(i) - ti(i-1)) - 0.5f * dxdt(ti(i-2),xi(i-2)) / (ti(i-1) - ti(i-2)));
+            xi(i) = xi(i-1) + 0.5f * dti(i-1) * dti(i-1) * (1.5f * dxdt(ti(i-1),xi(i-1)) / dti(i-1) - 0.5f * dxdt(ti(i-2),xi(i-2)) / dti(i-2));
         } else {
-            dt = (1.0f/3.0f) * (ti(i) - ti(i-3));
-            xi(i) = xi(i-1) + (1.0f/12.0f) * dt * dt * (23.0f * dxdt(ti(i-1),xi(i-1)) / (ti(i) - ti(i-1)) - 16.0f * dxdt(ti(i-2),xi(i-2)) / (ti(i-1) - ti(i-2)) + 5.0f * dxdt(ti(i-3),xi(i-3)) / (ti(i-2) - ti(i-3)));
+            float dt_3 = (ti(i) - ti(i-3)) / 3.0f;
+            xi(i) = xi(i-1) + (1.0f/12.0f) * dt_3 * dt_3 * (23.0f * dxdt(ti(i-1),xi(i-1)) / dti(i-1) - 16.0f * dxdt(ti(i-2),xi(i-2)) / dti(i-2) + 5.0f * dxdt(ti(i-3),xi(i-3)) / (ti(i-2) - ti(i-3)));
         }
     }
     return xi;
@@ -467,26 +465,23 @@ Eigen::VectorXf cuben::ode::modab3s(float(*dxdt)(float, float), Eigen::VectorXf 
 
 Eigen::VectorXf cuben::ode::modab4s(float(*dxdt)(float, float), Eigen::VectorXf ti, float x0) {
     int n = ti.rows();
-    float dt = 0.0f;
+    if (n < 5) {
+        throw cuben::exceptions::xInsufficientDomain();
+    }
     Eigen::VectorXf xi(n);
-    for (int i = 0; i < n; i++) {
-        if (i == 0) {
-            xi(i) = x0;
-        } else if (i == 1) {
-            // Fall back to trapezoid
-            dt = ti(i) - ti(i-1);
-            xi(i) = xi(i-1) + dt * 0.5f * (dxdt(ti(i-1), xi(i-1)) + dxdt(ti(i), xi(i-1) + dt * dxdt(ti(i-1), xi(i-1))));
+    xi(0) = x0;
+    Eigen::VectorXf dti = ti.tail(n-1) - ti.head(n-1);
+    for (int i = 1; i < n; i++) {
+        if (i == 1) {
+            xi(i) = xi(i-1) + dti(i-1) * 0.5f * (dxdt(ti(i-1), xi(i-1)) + dxdt(ti(i), xi(i-1) + dti(i-1) * dxdt(ti(i-1), xi(i-1))));
         } else if (i == 2) {
-            // Fall back to modab2s
-            dt = 0.5f * (ti(i) - ti(i-2));
-            xi(i) = xi(i-1) + dt * dt * (1.5f * dxdt(ti(i-1),xi(i-1)) / (ti(i) - ti(i-1)) - 0.5f * dxdt(ti(i-2),xi(i-2)) / (ti(i-1) - ti(i-2)));
+            xi(i) = xi(i-1) + 0.5f * dti(i-1) * dti(i-1) * (1.5f * dxdt(ti(i-1),xi(i-1)) / dti(i-1) - 0.5f * dxdt(ti(i-2),xi(i-2)) / dti(i-2));
         } else if (i == 3) {
-            // Fall back to modab3s
-            dt = (1.0f/3.0f) * (ti(i) - ti(i-3));
-            xi(i) = xi(i-1) + (1.0f/12.0f) * dt * dt * (23.0f * dxdt(ti(i-1),xi(i-1)) / (ti(i) - ti(i-1)) - 16.0f * dxdt(ti(i-2),xi(i-2)) / (ti(i-1) - ti(i-2)) + 5.0f * dxdt(ti(i-3),xi(i-3)) / (ti(i-2) - ti(i-3)));
+            float dt_3 = (ti(i) - ti(i-3)) / 3.0f;
+            xi(i) = xi(i-1) + (1.0f/12.0f) * dt_3 * dt_3 * (23.0f * dxdt(ti(i-1),xi(i-1)) / dti(i-1) - 16.0f * dxdt(ti(i-2),xi(i-2)) / dti(i-2) + 5.0f * dxdt(ti(i-3),xi(i-3)) / (ti(i-2) - ti(i-3)));
         } else {
-            dt = 0.25f * (ti(i) - ti(i-4));
-            xi(i) = xi(i-1) + (1.0f/24.0f) * dt * dt * (55.0f * dxdt(ti(i-1),xi(i-1)) / (ti(i) - ti(i-1)) - 59.0f * dxdt(ti(i-2),xi(i-2)) / (ti(i-1) - ti(i-2)) + 37.0f * dxdt(ti(i-3),xi(i-3)) / (ti(i-2) - ti(i-3)) - 9.0f * dxdt(ti(i-4),xi(i-4)) / (ti(i-3) - ti(i-4)));
+            float dt_4 = 0.25f * (ti(i) - ti(i-4));
+            xi(i) = xi(i-1) + (1.0f/24.0f) * dt_4 * dt_4 * (55.0f * dxdt(ti(i-1),xi(i-1)) / dti(i-1) - 59.0f * dxdt(ti(i-2),xi(i-2)) / dti(i-2) + 37.0f * dxdt(ti(i-3),xi(i-3)) / dti(i-3) - 9.0f * dxdt(ti(i-4),xi(i-4)) / (ti(i-3) - ti(i-4)));
         }
     }
     return xi;
