@@ -268,4 +268,13 @@ namespace cuben {
 		Eigen::VectorXf modam3s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
 		Eigen::VectorXf modam4s(float(*fInd)(float,float), float(*fImp)(float,float), Eigen::VectorXf ti, float x0);
     }
+
+    namespace bvp {
+		void shoot(void(*dxdt)(float,Eigen::VectorXf,Eigen::VectorXf&), Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, Eigen::VectorXf& ti, Eigen::MatrixXf& xi);
+		void ltiFinEl(Eigen::Vector3f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt, Eigen::VectorXf& ti, Eigen::VectorXf& xi);
+		void nonLinFinEl(Eigen::VectorXf(*f)(Eigen::VectorXf,float), Eigen::MatrixXf(*dfdx)(Eigen::VectorXf,float), Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt, Eigen::VectorXf& ti, Eigen::VectorXf& xi);
+		Eigen::VectorXf colloPoly(Eigen::Vector3f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt);
+		Eigen::VectorXf colloCheby(Eigen::Vector4f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, int n);
+		Eigen::VectorXf bSplineGal(Eigen::Vector3f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt);
+    }
 }
