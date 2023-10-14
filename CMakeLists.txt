@@ -25,6 +25,7 @@ add_library(${PROJECT_NAME} STATIC
     diffint.cpp
     ode.cpp
     bvp.cpp
+    pde.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -50,3 +51,4 @@ add_gtest(test_leastsq tests/test_leastsq.cpp)
 add_gtest(test_diffint tests/test_diffint.cpp)
 add_gtest(test_ode tests/test_ode.cpp)
 add_gtest(test_bvp tests/test_bvp.cpp)
+add_gtest(test_pde tests/test_pde.cpp)

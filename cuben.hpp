@@ -277,4 +277,11 @@ namespace cuben {
 		Eigen::VectorXf colloCheby(Eigen::Vector4f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, int n);
 		Eigen::VectorXf bSplineGal(Eigen::Vector3f coeffs, Eigen::Vector2f tBounds, Eigen::Vector2f xBounds, float dt);
     }
+
+    namespace pde {
+		Eigen::MatrixXf expParaEuler(Eigen::VectorXf coeffs, float(&f)(float,float,float), float(&ul)(float), float(&ur)(float), float(&u0)(float), Eigen::Vector2f xBounds, Eigen::Vector2f tBounds, float dx, float dt);
+		Eigen::MatrixXf impParaEuler(Eigen::VectorXf coeffs, float(&f)(float,float), float(&ul)(float), float(&ur)(float), float(&u0)(float), Eigen::Vector2f xBounds, Eigen::Vector2f tBounds, float dx, float dt);
+		Eigen::MatrixXf heatCrankNicolson(float c, float(&ul)(float), float(&ur)(float), float(&u0)(float), Eigen::Vector2f xBounds, Eigen::Vector2f tBounds, float dx, float dt);
+		Eigen::MatrixXf finDiffElliptic(Eigen::VectorXf coeffs, float(&f)(float,float), float(&uxbcLower)(float), float(&uxbcUpper)(float), float(&uybcLower)(float), float(&uybcUpper)(float), Eigen::Vector2f xBounds, Eigen::Vector2f yBounds, float dx, float dy);
+    }
 }
