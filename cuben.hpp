@@ -284,4 +284,183 @@ namespace cuben {
 		Eigen::MatrixXf heatCrankNicolson(float c, float(&ul)(float), float(&ur)(float), float(&u0)(float), Eigen::Vector2f xBounds, Eigen::Vector2f tBounds, float dx, float dt);
 		Eigen::MatrixXf finDiffElliptic(Eigen::VectorXf coeffs, float(&f)(float,float), float(&uxbcLower)(float), float(&uxbcUpper)(float), float(&uybcLower)(float), float(&uybcUpper)(float), Eigen::Vector2f xBounds, Eigen::Vector2f yBounds, float dx, float dy);
     }
+
+    namespace rand {
+        float stdRoll();
+		Eigen::VectorXf eulerMaruyama(float(*f)(float,float), float(*g)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf milstein(float(*f)(float,float), float(*g)(float,float), float(*dgdx)(float,float), Eigen::VectorXf ti, float x0);
+		Eigen::VectorXf brownianBridge(Eigen::Vector2f tx0, Eigen::VectorXf txf, float resolution);
+    }
+
+    class Prng {
+        protected:
+        unsigned int state;
+        unsigned int nRolls;
+
+        public:
+        Prng();
+        Prng(unsigned int s);
+        float roll();
+        unsigned int getState();
+    };
+
+    class Lcg : public Prng {
+        protected:
+        unsigned int multiplier;
+        unsigned int offset;
+        unsigned int modulus;
+
+        public:
+        Lcg();
+        Lcg(unsigned int s, unsigned int m, unsigned int o, unsigned int mod);
+        float roll();
+    };
+
+    class MinStd : public Lcg {
+        public:
+        MinStd();
+        MinStd(unsigned int s);
+    };
+
+    class Randu : public Lcg {
+        public:
+        Randu();
+        Randu(unsigned int s);
+    };
+
+    class Alfg : public Prng {
+        protected:
+        unsigned int j;
+        unsigned int k;
+        Eigen::VectorXf stateVector;
+        Eigen::VectorXf initialize(unsigned int nj, unsigned int nk);
+
+        public:
+        Alfg();
+        Alfg(unsigned int nj, unsigned int nk);
+        float roll();
+    };
+
+    class Mlfg : public Prng {
+        protected:
+        unsigned int j;
+        unsigned int k;
+        Eigen::VectorXf stateVector;
+        Eigen::VectorXf initialize(unsigned int nj, unsigned int nk);
+
+        public:
+        Mlfg();
+        Mlfg(unsigned int nj, unsigned int nk);
+        float roll();
+    };
+
+    class MTwist : public Prng {
+        protected:
+        unsigned int w;
+        unsigned int n;
+        unsigned int m;
+        unsigned int r;
+        unsigned int a;
+        unsigned int u;
+        unsigned int s;
+        unsigned int b;
+        unsigned int t;
+        unsigned int c;
+        unsigned int l;
+        unsigned int mask;
+        unsigned int pow;
+        unsigned int spread;
+        unsigned int ndx;
+        std::vector<unsigned int> stateVec;
+        void generate();
+
+        public:
+        MTwist(unsigned int seed);
+        float roll();
+    };
+
+    class Bbs : public Prng {
+        protected:
+        unsigned int p;
+        unsigned int q;
+        unsigned int xPrev;
+
+        public:
+        Bbs();
+        Bbs(unsigned int np, unsigned int nq, unsigned int nx);
+    };
+
+    class Norm : public Prng {
+        public:
+        float mean;
+        float variance;
+        Norm();
+        float roll();
+        float cdf(float x);
+    };
+
+    class Halton : public Prng {
+        protected:
+        unsigned int basePrime;
+
+        public:
+        Halton();
+        Halton(unsigned int bp);
+        float roll();
+        Eigen::VectorXf rollAll(unsigned int numRolls);
+    };
+
+    class RandomWalk {
+        public:
+        RandomWalk();
+        Eigen::VectorXi getWalk(unsigned int nSteps);
+    };
+
+    class RandomEscape : public RandomWalk {
+        protected:
+        unsigned int lBound;
+        unsigned int uBound;
+
+        public:
+        RandomEscape();
+        RandomEscape(unsigned int lb, unsigned int ub);
+        Eigen::VectorXi getWalk(unsigned int nSteps = 0);
+        void setBounds(unsigned int ln, unsigned int ub);
+    };
+
+    class Brownian : public RandomWalk {
+        protected:
+        Norm normPrng;
+
+        public:
+        Brownian();
+        Eigen::VectorXf sampleWalk(Eigen::VectorXf xi);
+    };
+
+    class BrownianBridge : public RandomWalk {
+        public:
+        float t0;
+        float x0;
+        float tf;
+        float xf;
+        BrownianBridge();
+        BrownianBridge(float nt0, float nx0, float ntf, float nxf);
+        Eigen::VectorXf getWalk(float dt);
+        float bbf(float a, float b);
+        float bbg(float a, float b);
+    };
+
+    class BlackScholes : public RandomWalk {
+        protected:
+        float initPrice;
+        float strikePrice;
+        float interestRate;
+        float volatility;
+
+        public:
+        BlackScholes();
+        BlackScholes(float nip, float ncp, float nir, float nv);
+        Eigen::VectorXf getWalk(float tf, float dt);
+        float computeCallValue(float price, float tf);
+    };
 }

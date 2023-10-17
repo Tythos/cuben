@@ -12,7 +12,7 @@ namespace cuben {
                 EXPECT_EQ(cuben::constants::iterTol, (float)1e-8);
                 EXPECT_EQ(cuben::constants::zeroTol, (float)1e-8);
                 EXPECT_EQ(cuben::constants::adaptiveTol, (float)1e-4);
-                EXPECT_EQ(cuben::constants::relDiffEqTol, (float)1e-6);
+                EXPECT_EQ(cuben::constants::relDiffEqTol, (float)1e-5);
                 EXPECT_EQ(cuben::constants::bvpZeroTol, (float)1e-6);
                 EXPECT_EQ(cuben::constants::iterLimit, (int)1e4);
             }

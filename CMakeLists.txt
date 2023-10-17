@@ -26,6 +26,22 @@ add_library(${PROJECT_NAME} STATIC
     ode.cpp
     bvp.cpp
     pde.cpp
+    rand.cpp
+    Prng.cpp
+    Lcg.cpp
+    MinStd.cpp
+    Randu.cpp
+    Alfg.cpp
+    Mlfg.cpp
+    MTwist.cpp
+    Bbs.cpp
+    Norm.cpp
+    Halton.cpp
+    RandomWalk.cpp
+    RandomEscape.cpp
+    Brownian.cpp
+    BrownianBridge.cpp
+    BlackScholes.cpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -52,3 +68,19 @@ add_gtest(test_diffint tests/test_diffint.cpp)
 add_gtest(test_ode tests/test_ode.cpp)
 add_gtest(test_bvp tests/test_bvp.cpp)
 add_gtest(test_pde tests/test_pde.cpp)
+add_gtest(test_rand tests/test_rand.cpp)
+add_gtest(test_Prng tests/test_Prng.cpp)
+add_gtest(test_Lcg tests/test_Lcg.cpp)
+add_gtest(test_MinStd tests/test_MinStd.cpp)
+add_gtest(test_Randu tests/test_Randu.cpp)
+add_gtest(test_Alfg tests/test_Alfg.cpp)
+add_gtest(test_Mlfg tests/test_Mlfg.cpp)
+add_gtest(test_MTwist tests/test_MTwist.cpp)
+add_gtest(test_Bbs tests/test_Bbs.cpp)
+add_gtest(test_Norm tests/test_Norm.cpp)
+add_gtest(test_Halton tests/test_Halton.cpp)
+add_gtest(test_RandomWalk tests/test_RandomWalk.cpp)
+add_gtest(test_RandomEscape tests/test_RandomEscape.cpp)
+add_gtest(test_Brownian tests/test_Brownian.cpp)
+add_gtest(test_BrownianBridge tests/test_BrownianBridge.cpp)
+add_gtest(test_BlackScholes tests/test_BlackScholes.cpp)
