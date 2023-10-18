@@ -388,6 +388,7 @@ namespace cuben {
         public:
         Bbs();
         Bbs(unsigned int np, unsigned int nq, unsigned int nx);
+        float roll();
     };
 
     class Norm : public Prng {

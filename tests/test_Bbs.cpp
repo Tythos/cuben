@@ -9,7 +9,10 @@ namespace cuben {
     namespace tests {
         namespace test_Bbs {
             TEST(TestBbs, EmptyTest) {
-                ASSERT_TRUE(true);
+                cuben::Bbs prng;
+                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(prng.roll(), 7.46207e-1, 1e-3, true));
+                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(prng.roll(), 2.96331e-1, 1e-3, true));
+                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(prng.roll(), 6.36535e-1, 1e-3, true));
             }
         }
     }
