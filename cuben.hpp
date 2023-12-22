@@ -464,4 +464,31 @@ namespace cuben {
         Eigen::VectorXf getWalk(float tf, float dt);
         float computeCallValue(float price, float tf);
     };
+
+	namespace compress {
+		Eigen::VectorXf dct(Eigen::VectorXf xi);
+		float dctInterp(Eigen::VectorXf Xi, float t);
+		Eigen::VectorXf dctFit(Eigen::VectorXi xi, unsigned int n);
+		Eigen::MatrixXf dct2d(Eigen::MatrixXf xij);
+		Eigen::MatrixXf idct2d(Eigen::MatrixXf Xij);
+		Eigen::MatrixXi applyQuant(Eigen::MatrixXf Xij, Eigen::MatrixXf Qij);
+		Eigen::MatrixXf reverseQuant(Eigen::MatrixXi Xij, Eigen::MatrixXf Qij);
+		Eigen::MatrixXf linearQuant(unsigned int n, float p);
+		Eigen::MatrixXf jpegQuant(float p);
+		Eigen::MatrixXf baseYuvQuant();
+	}    
+
+    class JpgEncoder {
+        protected:
+            Eigen::VectorXi dpcmLengthTable;
+            std::vector<char> dpcmHexTable;
+            Eigen::MatrixXi rleLengthTable;
+            std::vector<char> rleHexTable;
+        public:
+            JpgEncoder();
+            unsigned int iitLen(int value);
+            void dpcmEnc(int value, unsigned int &nBits, std::vector<char> &bits);
+            void iitEnc(int value, unsigned int &nBits, std::vector<char> &bits);
+            void rleEnc(unsigned int nZeros, unsigned int nLength, unsigned int &nBits, std::vector<char> &bits);
+    };
 }
