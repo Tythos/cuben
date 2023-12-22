@@ -25,3 +25,24 @@ The project was created on Apr 30, 2013.
   - numerics
   
   - Mathematics
+
+## Getting Started
+
+Once cloned, ensure the submodules are present:
+
+```sh
+> git submodule update --init --recursive
+```
+
+Then, you can build the static libraries in the usual CMake two-step:
+
+```sh
+> cmake -S . -B build
+> cmake --build build
+```
+
+Once everything is built you can also use CTest to run the unit tests from the command line:
+
+```sh
+> ctest --test-dir build -C Debug
+```
