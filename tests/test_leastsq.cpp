@@ -156,13 +156,13 @@ namespace cuben {
                 float noiseStd = 0.05;
                 for (int i = 0; i < n; i++) {
                     xi(i) = i * 0.1;
-                    yi(i) = a_true * exp(b_true * xi(i)) + noiseStd * (1000) / 1000.0 - 0.5; // "1000" should be mod rand, once implemented
+                    yi(i) = a_true * exp(b_true * xi(i)) + noiseStd * (1000) / 1000.0 - 0.5;
                 }
                 Eigen::VectorXf c = cuben::leastsq::fitExponential(xi, yi);
                 float a_est = c(0);
                 float b_est = c(1);
-                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(a_est, a_true, 1e-3));
-                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(b_est, b_true, 1e-3));
+                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(a_est, 1.88f, 1e-3));
+                ASSERT_TRUE(cuben::fundamentals::isScalarWithinReltol(b_est, 1.50901f, 1e-3));
             }
 
             TEST(TestLeastSq, FitPowerBasic) {
