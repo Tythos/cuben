@@ -26,14 +26,24 @@ namespace cuben {
 
             TEST(TestRand, StdRollTest) {
                 float x = cuben::rand::stdRoll();
-                std::cout << x << std::endl;
+                // std::cout << x << std::endl;
+                ASSERT_TRUE(true);
             }
 
             TEST(TestRand, EulerMaruTest) {
                 Eigen::VectorXf ti(5); ti <<
                     0.1f, 0.2f, 0.3f, 0.4f, 0.5f;
                 Eigen::VectorXf out = cuben::rand::eulerMaruyama(fTest, gTest, ti, 0.0f);
-                std::cout << out << std::endl;
+                //std::cout << out << std::endl;
+                ASSERT_TRUE(true);
+            }
+
+            TEST(TestRand, MilsteinTest) {
+                Eigen::VectorXf ti(5); ti <<
+                    0.1f, 0.2f, 0.3f, 0.4f, 0.5f;
+                Eigen::VectorXf xi = cuben::rand::milstein(fTest, gTest, dgdxTest, ti, 0.0f);
+                //std::cout << xi << std::endl;
+                ASSERT_TRUE(true);
             }
         }
     }

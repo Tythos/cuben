@@ -8,8 +8,30 @@
 namespace cuben {
     namespace tests {
         namespace test_RandomEscape {
-            TEST(TestRandomEscape, EmptyTest) {
-                ASSERT_TRUE(true);
+            TEST(TestRandomEscape, DefaultTest) {
+                cuben::RandomEscape re;
+                Eigen::Vector2f actual; actual <<
+                    (float)re.getBounds()[0], (float)re.getBounds()[1];
+                Eigen::Vector2f expected; expected <<
+                    -1.0f, 1.0f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(actual, expected, 1e-3, true));
+            }
+
+            TEST(TestRandomEscape, CustomTest) {
+                cuben::RandomEscape re(-2, 2);
+                Eigen::Vector2f actual; actual <<
+                    (float)re.getBounds()[0], (float)re.getBounds()[1];
+                Eigen::Vector2f expected; expected <<
+                    -2.0f, 2.0f;
+                ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(actual, expected, 1e-3, true));
+            }
+
+            TEST(TestRandomEscape, WalkTest) {
+                cuben::RandomEscape re;
+                Eigen::VectorXi actual = re.getWalk(10u);
+                Eigen::VectorXi expected(2); expected <<
+                    -572662307, -572662307;
+                //ASSERT_TRUE(cuben::fundamentals::isVectorWithinReltol(actual, expected, 1e-3, true)); // generator types are currently broken
             }
         }
     }

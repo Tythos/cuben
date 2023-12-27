@@ -36,3 +36,9 @@ float cuben::BlackScholes::computeCallValue(float price, float tf) {
     cuben::Norm n = cuben::Norm();
     return price * n.cdf(d1) - strikePrice * std::exp(-interestRate * tf) * n.cdf(d2);
 }
+
+Eigen::Vector4f cuben::BlackScholes::getState() {
+    Eigen::Vector4f state; state <<
+        initPrice, strikePrice, interestRate, volatility;
+    return state;
+}

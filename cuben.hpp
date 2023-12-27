@@ -302,6 +302,7 @@ namespace cuben {
         Prng(unsigned int s);
         float roll();
         unsigned int getState();
+        unsigned int getRollCount() { return nRolls; }
     };
 
     class Lcg : public Prng {
@@ -314,6 +315,9 @@ namespace cuben {
         Lcg();
         Lcg(unsigned int s, unsigned int m, unsigned int o, unsigned int mod);
         float roll();
+        unsigned int getMultiplier() { return multiplier; }
+        unsigned int getOffset() { return offset; }
+        unsigned int getModulus() { return modulus; }
     };
 
     class MinStd : public Lcg {
@@ -346,12 +350,14 @@ namespace cuben {
         unsigned int j;
         unsigned int k;
         Eigen::VectorXf stateVector;
-        Eigen::VectorXf initialize(unsigned int nj, unsigned int nk);
 
         public:
         Mlfg();
         Mlfg(unsigned int nj, unsigned int nk);
+        Eigen::VectorXf initialize(unsigned int nj, unsigned int nk);
         float roll();
+        const unsigned int getPrimary() { return j; }
+        const unsigned int getSecondary() { return k; }
     };
 
     class MTwist : public Prng {
@@ -377,6 +383,7 @@ namespace cuben {
         public:
         MTwist(unsigned int seed);
         float roll();
+        const std::vector<unsigned int> getStateVec() { return stateVec; }
     };
 
     class Bbs : public Prng {
@@ -396,6 +403,7 @@ namespace cuben {
         float mean;
         float variance;
         Norm();
+        Norm(float m, float v) : mean(m), variance(v) {}
         float roll();
         float cdf(float x);
     };
@@ -407,6 +415,7 @@ namespace cuben {
         public:
         Halton();
         Halton(unsigned int bp);
+        const unsigned int getBasePrime() { return basePrime; }
         float roll();
         Eigen::VectorXf rollAll(unsigned int numRolls);
     };
@@ -419,14 +428,15 @@ namespace cuben {
 
     class RandomEscape : public RandomWalk {
         protected:
-        unsigned int lBound;
-        unsigned int uBound;
+        signed int lBound;
+        signed int uBound;
 
         public:
         RandomEscape();
-        RandomEscape(unsigned int lb, unsigned int ub);
+        RandomEscape(signed int lb, signed int ub);
         Eigen::VectorXi getWalk(unsigned int nSteps = 0);
-        void setBounds(unsigned int ln, unsigned int ub);
+        void setBounds(signed int ln, signed int ub);
+        const Eigen::Vector2i getBounds();
     };
 
     class Brownian : public RandomWalk {
@@ -463,6 +473,7 @@ namespace cuben {
         BlackScholes(float nip, float ncp, float nir, float nv);
         Eigen::VectorXf getWalk(float tf, float dt);
         float computeCallValue(float price, float tf);
+        Eigen::Vector4f getState();
     };
 
 	namespace compress {

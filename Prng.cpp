@@ -18,3 +18,7 @@ float cuben::Prng::roll() {
     nRolls += 1;
     return (float)std::rand() / RAND_MAX;
 }
+
+unsigned int cuben::Prng::getState() {
+    return state;
+}
