@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <exception>
 #include <iostream>
 #include <cmath>
@@ -11,12 +12,15 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <Eigen/Dense>
 #include <Eigen/Sparse>
 
 #ifndef M_PI
     #define M_PI 3.1415926535897932384626433
 #endif
+
+namespace std {
+	typedef complex<float> cmplx; // too much of a monkey-patch?
+}
 
 namespace cuben {
     namespace constants {
@@ -116,6 +120,7 @@ namespace cuben {
         bool isScalarWithinReltol(float actual, float expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
         bool isVectorWithinReltol(Eigen::VectorXf actual, Eigen::VectorXf expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
         bool isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::MatrixXf expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
+        bool isComplexWithinReltol(std::cmplx actual, std::cmplx expected, float relTol=1e-3, bool isDebuggedWhenFalse=false);
     }
 
     class Polynomial {
@@ -502,4 +507,23 @@ namespace cuben {
             void iitEnc(int value, unsigned int &nBits, std::vector<char> &bits);
             void rleEnc(unsigned int nZeros, unsigned int nLength, unsigned int &nBits, std::vector<char> &bits);
     };
+
+    namespace trig {
+		// Raw (single-vector) transforms and their recursive components
+		Eigen::VectorXcf sft(Eigen::VectorXf xi);
+		Eigen::VectorXf isft(Eigen::VectorXcf yi);
+		Eigen::VectorXcf fft(Eigen::VectorXf xi);
+		Eigen::MatrixXcf fftRec(Eigen::VectorXf xi);
+		Eigen::VectorXf ifft(Eigen::VectorXcf yi);
+		Eigen::MatrixXcf fftRec(Eigen::VectorXcf xi);
+		
+		// Signal transformations (includes shifting to and from symmetric format)
+		Eigen::VectorXcf dft(Eigen::VectorXf xi);
+		Eigen::VectorXf idft(Eigen::VectorXcf Xi);
+		Eigen::VectorXf genFreqVec(unsigned int n, float fSamp_hz);
+		Eigen::VectorXf genTimeVec(unsigned int n, float fSamp_hz);
+		void dftInterp(Eigen::VectorXf tmi_s, Eigen::VectorXf xmi, unsigned int n, Eigen::VectorXf &tni_s, Eigen::VectorXf &xni);
+		void dftFit(Eigen::VectorXf tni_s, Eigen::VectorXf xni, unsigned int m, Eigen::VectorXf &tmi_s, Eigen::VectorXf &xmi);
+		Eigen::VectorXf wienerFilter(Eigen::VectorXf xni, float p);  
+    }
 }

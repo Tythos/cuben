@@ -44,6 +44,7 @@ add_library(${PROJECT_NAME} STATIC
     "BlackScholes.cpp"
     "compress.cpp"
     "JpgEncoder.cpp"
+    "trig.cpp"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 
@@ -88,3 +89,4 @@ add_gtest(test_BrownianBridge "tests/test_BrownianBridge.cpp")
 add_gtest(test_BlackScholes "tests/test_BlackScholes.cpp")
 add_gtest(test_compress "tests/test_compress.cpp")
 add_gtest(test_JpgEncoder "tests/test_JpgEncoder.cpp")
+add_gtest(test_trig "tests/test_trig.cpp")

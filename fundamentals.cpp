@@ -220,3 +220,15 @@ bool cuben::fundamentals::isMatrixWithinReltol(Eigen::MatrixXf actual, Eigen::Ma
     }
     return isSatisfied;
 }
+
+bool cuben::fundamentals::isComplexWithinReltol(std::cmplx actual, std::cmplx expected, float relTol, bool isDebuggedWhenFalse) {
+    bool isSatisfied = true;
+    std::cmplx diff = actual - expected;
+    isSatisfied = std::abs(diff) / std::abs(expected) < relTol;
+    if (!isSatisfied && isDebuggedWhenFalse) {
+        std::cout << "[RELTOL COMPLEX FAILED]" << std::endl;
+        std::cout  << "\tactual: " << actual << std::endl;
+        std::cout  << "\texpected: " << expected << std::endl;
+    }
+    return isSatisfied;
+}
