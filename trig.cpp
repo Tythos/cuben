@@ -274,7 +274,7 @@ void cuben::trig::dftFit(Eigen::VectorXf tni_s, Eigen::VectorXf xni, unsigned in
     unsigned int n = Xni.rows();
     unsigned int nMargin = (unsigned int)std::floor(0.5f * ((float)n - (float)m));
     Eigen::VectorXcf Xmi = Xni.segment(nMargin,m);
-    std::cout << "Xmi:" << std::endl << Xmi << std::endl << std::endl;
+    // std::cout << "Xmi:" << std::endl << Xmi << std::endl << std::endl;
     xmi = idft(Xmi) * std::sqrt((float)m / (float)n);
     tmi_s = genTimeVec(xmi.rows(), (float)m / (float)n / (tni_s(1) - tni_s(0)));
 }
@@ -283,14 +283,13 @@ Eigen::VectorXf cuben::trig::wienerFilter(Eigen::VectorXf xni, float p) {
     unsigned int n = xni.rows();
     float noise = 0.5f * cuben::fundamentals::stdDev(xni);
     Eigen::VectorXcf Xi = dft(xni);
-
-    std::cout << "std dev: " << 2.0f * noise << std::endl;
+    // std::cout << "std dev: " << 2.0f * noise << std::endl;
     noise = (float)n * (p * noise) * (p * noise);
     for (int i = 0; i < n; i++) {
         float x2 = (std::conj(Xi(i)) * Xi(i)).real();
-        if (i < 16) { std::cout << Xi(i); }
+        // if (i < 16) { std::cout << Xi(i); }
         Xi(i) = std::max(x2 - noise, 0.0f) / x2 * Xi(i);
-        if (i < 16) { std::cout << Xi(i) << std::endl; }
+        // if (i < 16) { std::cout << Xi(i) << std::endl; }
     }
     return idft(Xi);
 }
